@@ -27,14 +27,15 @@ class Candidate_States(StatesGroup):
     Date_of_birth = State()
     Place_of_birth = State()
     Marital_status = State()
-    Have_any_children = State()
+    # Have_any_children = State()
     Height = State()
     Weight = State()
     City_of_residence = State()
     Current_location = State()
     Nationality = State()
-    Have_travel_passport = State()
-    COVID = State()
+    Nationality_country = State()
+    # Have_travel_passport = State()
+    # COVID = State()
 
 # Start with change language
 # Buttons for change language
