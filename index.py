@@ -15,6 +15,7 @@ import os
 class Candidate_States(StatesGroup):
     Desired_positions = State()
     Full_name = State()
+    Profile_photo = State()
     Date_of_birth = State()
     Place_of_birth = State()
     Marital_status = State()
@@ -33,34 +34,55 @@ class Candidate_States(StatesGroup):
     Instagram = State()
     LinkedIn = State()
     Vkontakte = State()
+    
     Name_cousen = State()
     Phone_Number_cousen = State()
     Relative_cousen = State()
     Father_name = State()
     Mother_name = State()
+    
     Education_degree = State()
     University_name = State()
     Special_degree = State()
+    
     Year_of_Education = State()
     Postgraduate_name = State()
     Postgraduate_special = State()
     Postgraduate_degree = State()
     Postgraduate_date = State()
+    
     Course_name = State()
     Course_date = State()
     Course_place = State()
     Course_photo = State()
+    
     Tattoo_discribe = State()
     Tattoo_photo = State()
+    
     Work_exp = State()
     Work_name = State()
     Work_place = State()
     Work_position = State()
     Work_responsibilities = State()
+
+    Other_work_exp = State()
+    Other_work_name = State()
+    Other_work_place = State()
+    Other_work_position = State()
+    Other_work_responsibilities = State()
+    
+    Now_work_exp = State()
+    Now_work_name = State()
+    Now_work_place = State()
+    Now_work_position = State()
+    Now_work_responsibilities = State()
+    
+    Comp_programs = State()
     Hoste_program = State()
     Finance_program = State()
     Travel_program = State()
     Graph_program = State()
+    
     Car_category = State()
     Added_language = State()
 # Включаем логирование, чтобы не пропустить важные сообщения
@@ -100,6 +122,23 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
 @dp.message(Candidate_States.Full_name)
 async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.update_data(full_name = message.text)
+    data  = await state.get_data()
+    # await message.answer(_('Отправьте фото своего профиля, как показано здесь:', data['language']))
+    
+    image_from_pc = FSInputFile("userquest.jpg")
+    await message.answer_photo(
+        image_from_pc,
+        caption=_('Отправьте фото своего профиля, как показано здесь:', data['language'])
+    )
+    await state.set_state(Candidate_States.Profile_photo)
+
+@dp.message(F.photo,Candidate_States.Profile_photo)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await bot.download(
+        message.photo[-1],
+        destination=f"{message.photo[-1].file_id}.jpg"
+    )
+    await state.update_data(profile_Photo = f"{message.photo[-1].file_id}.jpg")
     data  = await state.get_data()
     await message.answer(_('Введите свою дату рождения', data['language']))
     await state.set_state(Candidate_States.Date_of_birth)
@@ -538,7 +577,7 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     )
     await state.update_data(tattoo_Photo = f"{message.photo[-1].file_id}.jpg")
     data  = await state.get_data()
-    await message.answer(_('Опишите ваш опыт работы', data['language'])+'n'+
+    await message.answer(_('Опишите ваш опыт работы', data['language'])+'\n'+
                             _('Официальный и не официальный начиная с последнего или текущего места работы', data['language']))
     await state.set_state(Candidate_States.Work_exp)
 
@@ -573,6 +612,122 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
 @dp.message(Candidate_States.Work_responsibilities)
 async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.update_data(work_responsibilities = message.text)
+    data  = await state.get_data()
+    other_work_KB = InlineKeyboardBuilder()
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'other_work_yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'other_work_no')
+    other_work_KB.row(yes,no)
+    await message.answer(_('Кроме вышеупомянутой работы, есть ли у вас ещё опыт работы?', data['language']),
+                         reply_markup=other_work_KB.as_markup())
+
+@dp.callback_query(lambda c: c.data and c.data.startswith('other_work'))
+async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    data  = await state.get_data()
+    await state.update_data(other_work_access = callback.data.split('_')[2])
+    if 'yes'==callback.data.split('_')[2]:
+        await callback.message.edit_text(_('Опишите ваш опыт работы', data['language']))
+        await state.set_state(Candidate_States.Other_work_exp)
+    else:
+        now_work_KB = InlineKeyboardBuilder()
+        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'now_work_yes')
+        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'now_work_no')
+        now_work_KB.row(yes,no)
+        await callback.message.answer(_('Работаете ли вы сейчас?', data['language']),
+                            reply_markup=now_work_KB.as_markup())
+
+@dp.message(Candidate_States.Other_work_exp)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(other_work_exp = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Введите имя компании', data['language']))
+    await state.set_state(Candidate_States.Other_work_name)
+
+@dp.message(Candidate_States.Other_work_name)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(other_work_name = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Введите местоположение компании', data['language']))
+    await state.set_state(Candidate_States.Other_work_place)
+    
+@dp.message(Candidate_States.Other_work_place)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(other_work_place = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Введите вашу должность', data['language']))
+    await state.set_state(Candidate_States.Other_work_position)
+
+@dp.message(Candidate_States.Other_work_position)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(other_work_position = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Введите ваши обязанности', data['language']))
+    await state.set_state(Candidate_States.Other_work_responsibilities)
+
+@dp.message(Candidate_States.Other_work_responsibilities)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(other_work_responsibilities = message.text)
+    data  = await state.get_data()
+    now_work_KB = InlineKeyboardBuilder()
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'now_work_yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'now_work_no')
+    now_work_KB.row(yes,no)
+    await message.answer(_('Работаете ли вы сейчас?', data['language']),
+                        reply_markup=now_work_KB.as_markup())
+
+
+# *********************************************
+@dp.callback_query(lambda c: c.data and c.data.startswith('now_work'))
+async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    data  = await state.get_data()
+    await state.update_data(now_work_access = callback.data.split('_')[2])
+    if 'yes'==callback.data.split('_')[2]:
+        await callback.message.edit_text(_('Опишите ваш опыт работы', data['language']))
+        await state.set_state(Candidate_States.Now_work_exp)
+    else:
+        await state.set_state(Candidate_States.Comp_programs)
+
+
+@dp.message(Candidate_States.Now_work_exp)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(now_work_exp = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Введите имя компании', data['language']))
+    await state.set_state(Candidate_States.Now_work_name)
+
+@dp.message(Candidate_States.Now_work_name)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(now_work_name = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Введите местоположение компании', data['language']))
+    await state.set_state(Candidate_States.Now_work_place)
+
+@dp.message(Candidate_States.Now_work_place)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(now_work_place = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Введите вашу должность', data['language']))
+    await state.set_state(Candidate_States.Now_work_position)
+
+@dp.message(Candidate_States.Now_work_position)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(now_work_position = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Введите ваши обязанности', data['language']))
+    await state.set_state(Candidate_States.Now_work_responsibilities)
+
+@dp.message(Candidate_States.Now_work_responsibilities)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(now_work_responsibilities = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Работали ли вы с компьютерными программами для гостеприимства?', data['language'])+'\n'+
+                            _('Если да, напишите название, если нет введите "нет"', data['language']))
+    await state.set_state(Candidate_States.Hoste_program)
+
+
+# **************************************
+@dp.message(Candidate_States.Comp_programs)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    # await state.update_data(work_responsibilities = message.text)
     data  = await state.get_data()
     await message.answer(_('Работали ли вы с компьютерными программами для гостеприимства?', data['language'])+'\n'+
                             _('Если да, напишите название, если нет введите "нет"', data['language']))
@@ -747,6 +902,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         save = types.InlineKeyboardButton(text = _('Отправить', data['language']), callback_data = 'Save_data')
         restart = types.InlineKeyboardButton(text = _('Заново', data['language']), callback_data = 'Delete_data')
         send_kb.row(save, restart)
+        print('Ваши данные'+f'{data}')
         await callback.message.edit_text(_('Ваши данные', data['language'])+f'{data}',reply_markup = send_kb.as_markup())
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('Save_data'))
@@ -759,6 +915,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.clear()
     await callback.message.edit_text(_('Введите данные заново.', data['language'])+'\n'+_('Введите /start', data['language']))
+
 # @dp.message(Command('images'))
 # async def upload_photo(message: types.Message):
 #     file_ids = []
