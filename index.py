@@ -90,6 +90,7 @@ logging.basicConfig(level=logging.INFO)
 # Объект бота
 TOKEN = "6439782775:AAGjeVKXRcGFuJih7ZkEo12xyDI-udRz2N4"
 bot = Bot(token=TOKEN)
+
 # Диспетчер
 dp = Dispatcher(storage=MemoryStorage(), fsm_strategy=FSMStrategy.USER_IN_CHAT )
 
@@ -829,18 +830,18 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(english = callback.data.split('_')[1])
     other_lang_KB = InlineKeyboardBuilder() 
-    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'other_lang_Yes')
-    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'other_lang_No')
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'other_lang_access_Yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'other_lang_access_No')
     other_lang_KB.row(yes, no)
     await callback.message.edit_text(_('Знаете ли вы дополнительный язык?', data['language']),
                                       reply_markup = other_lang_KB.as_markup())
     
-@dp.callback_query(lambda c: c.data and c.data.startswith('other_lang'))
+@dp.callback_query(lambda c: c.data and c.data.startswith('other_lang_access'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
-    await state.update_data(other_lang_access = callback.data.split('_')[2])
+    await state.update_data(other_lang_access = callback.data.split('_')[3])
 
-    if 'Yes' == callback.data.split('_')[2]:
+    if 'Yes' == callback.data.split('_')[3]:
         await callback.message.edit_text(_('Введите дополнительный язык', data['language']))
         await state.set_state(Candidate_States.Added_language)
     else:
@@ -860,22 +861,37 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.update_data(added_language = message.text)
     data  = await state.get_data()
 
-    other_lang_KB = InlineKeyboardBuilder() 
-    basic = types.InlineKeyboardButton(text = _('Базовый', data['language']), callback_data = 'other_lang_Basic')
-    elementary = types.InlineKeyboardButton(text = _('Элементарный', data['language']), callback_data = 'other_lang_Elementary')
-    lowerInt = types.InlineKeyboardButton(text = _('Ниже среднего', data['language']), callback_data = 'other_lang_Lower Intermediate')
-    intermediate = types.InlineKeyboardButton(text = _('Средний', data['language']), callback_data = 'other_lang_Intermediate')
-    upperInt = types.InlineKeyboardButton(text = _('Выше среднего', data['language']), callback_data = 'other_lang_Upper Intermediate')
-    advanced = types.InlineKeyboardButton(text = _('Продвинутый', data['language']), callback_data = 'other_lang_Advanced')
-    fluent = types.InlineKeyboardButton(text = _('Носитель', data['language']), callback_data = 'other_lang_Fluent')
-    other_lang_KB.row(basic, elementary, lowerInt, intermediate, upperInt, advanced, fluent).adjust(3,3)
+    added_language_KB = InlineKeyboardBuilder() 
+    basic = types.InlineKeyboardButton(text = _('Базовый', data['language']), callback_data = 'other_lang_level_Basic')
+    elementary = types.InlineKeyboardButton(text = _('Элементарный', data['language']), callback_data = 'other_lang_level_Elementary')
+    lowerInt = types.InlineKeyboardButton(text = _('Ниже среднего', data['language']), callback_data = 'other_lang_level_Lower Intermediate')
+    intermediate = types.InlineKeyboardButton(text = _('Средний', data['language']), callback_data = 'other_lang_level_Intermediate')
+    upperInt = types.InlineKeyboardButton(text = _('Выше среднего', data['language']), callback_data = 'other_lang_level_Upper Intermediate')
+    advanced = types.InlineKeyboardButton(text = _('Продвинутый', data['language']), callback_data = 'other_lang_level_Advanced')
+    fluent = types.InlineKeyboardButton(text = _('Носитель', data['language']), callback_data = 'other_lang_level_Fluent')
+    added_language_KB.row(basic, elementary, lowerInt, intermediate, upperInt, advanced, fluent).adjust(3,3)
     await message.answer(_('На каком уровне вы облодаете дополнительнм языком?', data['language']),
-                                      reply_markup = other_lang_KB.as_markup())
+                                      reply_markup = added_language_KB.as_markup())
+
+@dp.callback_query(lambda c: c.data and c.data.startswith('other_lang_level'))
+async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    data  = await state.get_data()
+    await state.update_data(other_lang_level = callback.data.split('_')[3])
+    know_about_as_KB = InlineKeyboardBuilder()
+    google = types.InlineKeyboardButton(text = 'Google search' , callback_data = 'know_about_as_Google')
+    facebook = types.InlineKeyboardButton(text = 'Facebook' , callback_data = 'know_about_as_Facebook')
+    instagram = types.InlineKeyboardButton(text = 'Instagram' , callback_data = 'know_about_as_Instagram')
+    vk = types.InlineKeyboardButton(text = 'Vk.com' , callback_data = 'know_about_as_Vk')
+    friends = types.InlineKeyboardButton(text =  _('Через рекомендацию друзей', data['language']) , callback_data = 'know_about_as_Friends')
+    other_source = types.InlineKeyboardButton(text =  _('Другие источники поиска работы', data['language']) , callback_data = 'know_about_as_Other')
+    know_about_as_KB.row(google, facebook, instagram, vk, friends, other_source).adjust(3,3)
+    await callback.message.edit_text(_('Откуда вы о нас узнали?', data['language']),
+                                reply_markup = know_about_as_KB.as_markup())
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('know_about_as'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
-    await state.update_data(other_lang = callback.data.split('_')[3])
+    await state.update_data(know_about_as = callback.data.split('_')[3])
     agree_24_kb = InlineKeyboardBuilder()
     yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
     no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
@@ -902,8 +918,146 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         save = types.InlineKeyboardButton(text = _('Отправить', data['language']), callback_data = 'Save_data')
         restart = types.InlineKeyboardButton(text = _('Заново', data['language']), callback_data = 'Delete_data')
         send_kb.row(save, restart)
-        print('Ваши данные'+f'{data}')
-        await callback.message.edit_text(_('Ваши данные', data['language'])+f'{data}',reply_markup = send_kb.as_markup())
+        first_block =( 
+            f'{ _("ФИО", data["language"])} : {data["full_name"]} \n'
+            f'{ _("Желаемые должности", data["language"])} : {data["desired_positions"]} \n'
+            # f'profile_Photo : {data["profile_Photo"]} \n'
+            f'{ _("Дата рождения", data["language"])} : {data["date_of_birth"]} \n'
+            f'{ _("Место рождения", data["language"])} : {data["place_of_birth"]} \n'
+            f'{ _("Семейное положение", data["language"])} : {data["married"]} \n'
+            f'{ _("Наличие детей", data["language"])} : {data["have_any_children"]} \n'
+            f'{ _("Рост (cm)", data["language"])} : {data["height"]} \n'
+            f'{ _("Вес (kg)", data["language"])} : {data["weight"]} \n'
+            f'{ _("Город проживания", data["language"])} : {data["city_of_residence"]} \n'
+            f'{ _("Текущее местоположение", data["language"])} : {data["current_location"]} \n'
+            f'{ _("Национальность", data["language"])} : {data["nationality"]} \n'
+            f'{ _("Гражданство", data["language"])} : {data["nationality_country"]} \n'
+            f'{ _("Наличие загранпасспорт", data["language"])} : {data["haveP_"]} \n'
+            )
+        if data["covid_access"]=="Yes":
+            second_block = f'{_("Вакцинация от COVID", data["language"])} : {_("Да", data["language"])} \n'
+            covid_photo = data["COVID_Photo"]
+        else: 
+            second_block = f'{_("Вакцинация от COVID", data["language"])} : {_("Нет", data["language"])} \n'
+        third_block =(
+            f'{_("Номер мобильного телефона", data["language"])} : {data["phone_Number"]} \n'
+            f'{_("Наличие мессенджеров (Whatsapp, Viber...)", data["language"])} : {data["messenger"]} \n'
+            f'Email : {data["email"]} \n'
+            f'instagram : {data["instagram"]} \n'
+            f'linkedIn : {data["linkedIn"]} \n'
+            f'vkontakte : {data["vkontakte"]} \n'
+            f'{_("Имя вашего родственника", data["language"])} : {data["name_cousen"]} \n'
+            f'{_("Телефон вашего родственника", data["language"])} : {data["phone_Number_cousen"]} \n'
+            f'{_("Тип  отношения с родственником", data["language"])} : {data["relative_cousen"]} \n'
+            f'{_("Имя Отца", data["language"])} : {data["father_name"]} \n'
+            f'{_("Имя матери", data["language"])} : {data["mother_name"]} \n'
+            f'{_("Катар для переезда и работы", data["language"])} : {data["gatar"]} \n'
+            f'{_("ОАЭ для переезда и работы", data["language"])} : {data["UAE"]} \n'
+            f'{_("Бахрейн для переезда и работы", data["language"])} : {data["Bahrain"]} \n'
+            f'{_("Оман для переезда и работы", data["language"])} : {data["Oman"]} \n'
+            f'{_("Оброзование (степень)", data["language"])} : {data["education_stepen"]} \n'
+            f'{_("Наименование вуза или колледжа", data["language"])} : {data["university_name"]} \n'
+            f'{_("Специализация или факультет", data["language"])} : {data["special_degree"]} \n'
+            f'{_("Годы обучения", data["language"])} : {data["year_of_Education"]} \n'
+        )
+        if data["postgraduate_access"]=="yes":
+            foure_block = (
+            f'{_("Годы Наличие Последипломное образование (степень)", data["language"])} : {data["postgraduate_degree"]} \n'
+            f'{_("Наименование вуза или колледжа (Последипломное образование)", data["language"])} : {data["postgraduate_name"]} \n'
+            f'{_("Специализация или факультет (Последипломное образование)", data["language"])} : {data["postgraduate_special"]} \n'
+            f'{_("Годы обучения (Последипломное образование)", data["language"])} : {data["postgraduate_date"]} \n'
+            )
+        else: 
+            foure_block = 'have not postgraduate \n'
+        
+        if data["course_access"]=="yes":
+            fifth_block = (
+            f'{_("Дополнительные курсы", data["language"])} : {data["сourse_name"]} \n'
+            f'{_("Время прохождения курса", data["language"])} : {data["course_date"]} \n'
+            f'{_("Место прохождения курса", data["language"])} : {data["Course_place"]} \n'
+            )
+            if data["doc_course_access"]=="yes":
+                fifth_block+=f'{_("Наличие сертификата пройденного курса", data["language"])} : {_("Да", data["language"])} \n'
+                Course_Photo = data["Course_Photo"]
+            else:
+                fifth_block+=f'{_("Наличие сертификата пройденного курса", data["language"])} : {_("Нет", data["language"])} \n'
+
+        else: 
+            fifth_block = 'have not course \n'
+
+        if data["tattoo_access"]=="yes":
+            six_block = f'{_("Описание тату или пирсинга", data["language"])} : {data["tattoo_discribe"]} \n'
+            tattoo_Photo= data["tattoo_Photo"]
+        else: 
+            six_block = 'have not tattoo \n'
+
+        seventh_block = (
+            f'{_("Опыт работы", data["language"])} : {data["work_exp"]} \n'
+            f'{_("Имя компании", data["language"])} : {data["work_name"]} \n'
+            f'{_("Местоположение компании", data["language"])} : {data["work_place"]} \n'
+            f'{_("Должность", data["language"])} : {data["work_position"]} \n'
+            f'{_("Ваши обязанности", data["language"])} : {data["work_responsibilities"]} \n'
+            )
+        
+        if data["other_work_access"]=="yes":
+            eithg_block = (
+            f'{_("Опыт работы", data["language"])} : {data["other_work_exp"]} \n'
+            f'{_("Имя компании", data["language"])} : {data["other_work_name"]} \n'
+            f'{_("Местоположение компании", data["language"])} : {data["other_work_place"]} \n'
+            f'{_("Должность", data["language"])} : {data["other_work_position"]} \n'
+            f'{_("Ваши обязанности", data["language"])} : {data["other_work_responsibilities"]} \n'
+            )
+        else: 
+            eithg_block = 'have not other work \n'
+        
+        if data["now_work_access"]=="yes":
+            nine_block = (
+            f'{_("Работа (сечас)", data["language"])}\n'
+            f'{_("Опыт работы", data["language"])} : {data["now_work_exp"]} \n'
+            f'{_("Имя компании", data["language"])} : {data["now_work_name"]} \n'
+            f'{_("Местоположение компании", data["language"])} : {data["now_work_place"]} \n'
+            f'{_("Должность", data["language"])} : {data["now_work_position"]} \n'
+            f'{_("Ваши обязанности", data["language"])} : {data["now_work_responsibilities"]} \n'
+            )
+        else: 
+            nine_block = 'have not other work \n'
+        
+        tenth_block = (
+            f'{_("Компьютерные программы, с которыми вы работаете", data["language"])} \n'
+            f'{_("для гостеприимства", data["language"])} : {data["hoste_program"]} \n'
+            f'{_("для финансов", data["language"])} : {data["finance_program"]} \n'
+            f'{_("для путешествий и бронирования", data["language"])} : {data["travel_program"]} \n'
+            f'{_("для графики и дизайн", data["language"])} : {data["graph_program"]} \n'
+            )
+        
+        if data["car_access"]=="yes":
+            car_category = f'{_("Категория водительских прав", data["language"])} : {data["car_category"]} \n'
+            eleventh_block = f'car_category : {data["car_category"]} \n'
+        else: 
+            eleventh_block = 'have not car passport \n'
+
+        twelvth_block = (
+            f'{_("Уровень русского языка", data["language"])} : {data["russian"]} \n'
+            f'{_("Уровень английского языка", data["language"])} : {data["english"]} \n'
+            )
+
+        if data["other_lang_access"]=="Yes":
+            third_block = (
+            f'{_("Дополнительный язык", data["language"])} : {data["added_language"]} \n'
+            f'{_("Уровень дополнительного языка", data["language"])} : {data["other_lang_level"]} \n'
+            )
+        else: 
+            third_block = 'have not other lang \n'
+        
+        fourth_block =  f'know_about_as : {data["know_about_as"]} \n'
+        fifth_block = f'{_("Дата создания заявки", data["language"])} : {callback.message.date.strftime("%d %B %H:%M")} \n'
+
+        message_data = (first_block + second_block + third_block + foure_block + fifth_block + 
+                        six_block + seventh_block + eithg_block + nine_block + tenth_block +
+                        eleventh_block + twelvth_block + third_block + fifth_block )
+        print('Ваши данные \n'+f'{message_data}')
+        
+        await callback.message.edit_text(_('Ваши данные', data['language'])+f'\n{message_data}',reply_markup = send_kb.as_markup())
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('Save_data'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
