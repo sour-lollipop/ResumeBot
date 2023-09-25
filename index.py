@@ -32,7 +32,9 @@ class Candidate_States(StatesGroup):
     COVID_Photo = State()
     Phone_Number = State()
     Messenger = State()
+    
     Email = State()
+    Facebook = State()
     Instagram = State()
     LinkedIn = State()
     Vkontakte = State()
@@ -298,6 +300,13 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
 @dp.message(Candidate_States.Instagram)
 async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.update_data(instagram = message.text)
+    data  = await state.get_data()
+    await message.answer(_('Введите ваш Facebook', data['language']))
+    await state.set_state(Candidate_States.Facebook)
+
+@dp.message(Candidate_States.Facebook)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(Facebook = message.text)
     data  = await state.get_data()
     await message.answer(_('Введите ваш LinkedIn', data['language']))
     await state.set_state(Candidate_States.LinkedIn)
@@ -946,6 +955,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             f'{_("Наличие мессенджеров (Whatsapp, Viber...)", data["language"])} : {data["messenger"]} \n'
             f'Email : {data["email"]} \n'
             f'instagram : {data["instagram"]} \n'
+            f'Facebook : {data["Facebook"]} \n'
             f'linkedIn : {data["linkedIn"]} \n'
             f'vkontakte : {data["vkontakte"]} \n'
             f'{_("Имя вашего родственника", data["language"])} : {data["name_cousen"]} \n'
