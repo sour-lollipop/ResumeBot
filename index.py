@@ -1,6 +1,7 @@
 import asyncio
 import logging
-from translations import _
+import os
+import requests
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -11,8 +12,9 @@ from aiogram.fsm.strategy import FSMStrategy
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import html
 from aiogram import F
-import os
-import requests
+from docx import Document 
+
+from translations import _
 
 class Candidate_States(StatesGroup):
     Desired_positions = State()
@@ -1079,7 +1081,16 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     # url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msg}"
     print(requests.get(url).json())
-
+    
+    #сохраняем резюме в формате docx
+    doc = Document('new_resume.docx')
+    
+    for key, value in data.items():
+        replace_text(doc, key+'_test', value)
+    
+    id_teleg = callback.message.chat.id
+    doc.save(f'new_resume{id_teleg}.docx')
+    
     await callback.message.edit_text(_('Ваше резюме успешно отправлено!', data['language']))
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('Delete_data'))
@@ -1118,6 +1129,18 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
 async def main():
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
+    
+def replace_text(doc, old_text, new_text):
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    if old_text in paragraph.text:
+                        inline = paragraph.runs
+                        for i in range(len(inline)):
+                            if old_text in inline[i].text:
+                                text = inline[i].text.replace(old_text, new_text)
+                                inline[i].text = text
 
 if __name__ == "__main__":
     asyncio.run(main())
