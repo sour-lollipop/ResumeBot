@@ -1,0 +1,118 @@
+"data_set":{
+   "language":"ru",
+   "desired_positions":"разработчик",
+   "full_name":"Досымханова Акмарал\\",
+   "profile_Photo":"AgACAgIAAxkBAAIGa2URdoxNuqVCDKN1A7cQQdKRd-kNAALVzzEbfQABkEgNF_cTlB8agAEAAwIAA3cAAzAE.jpg",
+   "date_of_birth":"28 ноября 2001 года",
+   "place_of_birth":"Чунджа",
+   "married":"N",
+   "have_any_children":"N",
+   "height":"165",
+   "weight":"секрет",
+   "city_of_residence":"алматы",
+   "current_location":"Алматы Казахстан",
+   "nationality":"Казашка",
+   "nationality_country":"Казахстан",
+   "haveP_":"N",
+   
+
+   "covid_access":"Yes",
+   // Если "covid_access":"No" то COVID_Photo НЕ БУДЕТ:
+   "COVID_Photo":"AgACAgIAAxkBAAIGfWURduWhU0Uq2srkOYtMzRsaxV6dAALXzzEbfQABkEgGl2ke8U59NQEAAwIAA3cAAzAE.jpg",
+   // Вот этого ↑↑↑
+   
+
+   "phone_Number":"87053936054",
+   "messenger":"ага",
+   "email":"akosyakuroneko@gmail.com",
+   "instagram":"no_namee_zz",
+   "linkedIn":"akmaral dossymhkanova",
+   "vkontakte":"akodd",
+   "name_cousen":"Дамир",
+   "phone_Number_cousen":"87084189639",
+   "relative_cousen":"парень",
+   "father_name":"Есимхан",
+   "mother_name":"Лаура",
+   "gatar":"no",
+   "UAE":"yes",
+   "Bahrain":"no",
+   "Oman":"yes",
+   "education_stepen":"Бакалавр",
+   "university_name":"Сатпаев университет",
+   "special_degree":"Информационная безопасность",
+   "year_of_Education":"2019-2023",
+
+
+   "postgraduate_access":"no",
+   // Если "postgraduate_access":"yes" то БУДЕТ:
+   // "postgraduate_degree":"text",
+   // "postgraduate_name":"text",
+   // "postgraduate_special":"text",
+   // "postgraduate_date":"text",
+
+
+   "course_access":"no",
+   // Если "course_access":"yes" то БУДЕТ:
+   // "сourse_name":"text",
+   // "course_date":"text",
+   // "Course_place":"text",
+      // Если "doc_course_access":"yes" то БУДЕТ:
+      // "Course_Photo":"text",  
+
+
+   "tattoo_access":"no",
+   // Если "tattoo_access":"yes" то БУДЕТ:
+   // "tattoo_discribe":"text",
+   // "tattoo_Photo":"text",
+   
+   
+   "work_exp":"Разработчик ботов",
+   "work_name":"Госу",
+   "work_place":"Таугуль 1 д 33б",
+   "work_position":"программист 1с",
+   "work_responsibilities":"ботов писать",
+
+
+   "other_work_access":"no",
+   // Если "other_work_access":"yes" то БУДЕТ:
+   // "other_work_name":"text",
+   // "other_work_place":"text",
+   // "other_work_position":"text",
+   // "other_work_responsibilities":"text",
+
+
+   "now_work_access":"yes",
+   // Если "now_work_access":"no" то НЕ БУДЕТ:
+   "now_work_exp":"Дизайн и разработчик фронт",
+   "now_work_name":"госу",
+   "now_work_place":"таугуль 1 33б",
+   "now_work_position":"программист 1с",
+   "now_work_responsibilities":"писать сайты",
+   // Вот этого ↑↑↑
+
+
+
+   "hoste_program":"нет",
+   "finance_program":"нет",
+   "travel_program":"нет",
+   "graph_program":"фигма канва",
+
+   
+   "car_access":"no",
+   // Если "car_access":"yes" то БУДЕТ:
+   // "car_category":"text",
+
+
+   "russian":"Intermediate",
+   "english":"Intermediate",
+
+
+   "other_lang_access":"Yes",
+   // Если "now_work_access":"No" то НЕ БУДЕТ:
+   "added_language":"казахский",
+   "other_lang_level":"Fluent",
+   // Вот этого ↑↑↑
+
+
+   "know_about_as":"Other"
+}

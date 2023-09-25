@@ -12,6 +12,8 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import html
 from aiogram import F
 import os
+import requests
+
 class Candidate_States(StatesGroup):
     Desired_positions = State()
     Full_name = State()
@@ -1056,12 +1058,18 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
                         six_block + seventh_block + eithg_block + nine_block + tenth_block +
                         eleventh_block + twelvth_block + third_block + fifth_block )
         print('Ваши данные \n'+f'{message_data}')
-        
+        print('\n data_set: \n')
+        print(data)
         await callback.message.edit_text(_('Ваши данные', data['language'])+f'\n{message_data}',reply_markup = send_kb.as_markup())
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('Save_data'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
+    msg = f'Новое резюме: {data["full_name"] }'
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msg}"
+    print(requests.get(url).json())
+
     await callback.message.edit_text(_('Ваше резюме успешно отправлено!', data['language']))
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('Delete_data'))
