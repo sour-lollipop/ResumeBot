@@ -15,6 +15,7 @@ from aiogram import F
 from docx import Document 
 
 from translations import _
+from create_doc import save_document
 
 class Candidate_States(StatesGroup):
     Desired_positions = State()
@@ -1069,6 +1070,8 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         message_data = (first_block + second_block + third_block + foure_block + fifth_block + 
                         six_block + seventh_block + eithg_block + nine_block + tenth_block +
                         eleventh_block + twelvth_block + third_block + fifth_block )
+        await state.update_data(resume_creating_date = callback.message.date.strftime("%d %B %H:%M"))
+        
         print('Ваши данные \n'+f'{message_data}')
         print('\n data_set: \n')
         print(data)
@@ -1081,15 +1084,8 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     # url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msg}"
     print(requests.get(url).json())
-    
-    #сохраняем резюме в формате docx
-    doc = Document('new_resume.docx')
-    
-    for key, value in data.items():
-        replace_text(doc, key+'_test', value)
-    
-    id_teleg = callback.message.chat.id
-    doc.save(f'new_resume{id_teleg}.docx')
+    save_document(data, callback.message.from_user.id)
+
     
     await callback.message.edit_text(_('Ваше резюме успешно отправлено!', data['language']))
 
