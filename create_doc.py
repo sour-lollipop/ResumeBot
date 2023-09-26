@@ -2,6 +2,7 @@ from docx import Document
 from docx.shared import Pt, RGBColor, Mm, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import os
+from translations import _
 
 
 def save_document(dataset, user_id):
@@ -176,7 +177,7 @@ def save_document(dataset, user_id):
     ]
     if dataset["postgraduate_access"]=="yes":
         items5 = [
-        (f'{dataset["education_stepen"]}', f'{dataset["university_name"]}', f'{dataset["special_degree"]}', f'{dataset["year_of_Education"]}')
+        (f'{dataset["education_stepen"]}', f'{dataset["university_name"]}', f'{dataset["special_degree"]}', f'{dataset["year_of_Education"]}'),
         (f'{dataset["postgraduate_degree"]}', f'{dataset["postgraduate_name"]}', f'{dataset["postgraduate_special"]}', f'{dataset["postgraduate_date"]}')
         ]
 
@@ -432,7 +433,8 @@ def save_document(dataset, user_id):
         ('English:', f'{dataset["english"]}')
         
     ]
-    if dataset["car_access"]=="yes":
+
+    if dataset["other_lang_access"]=="Yes":
             items10 = [
                     ('Russian:', f'{dataset["russian"]}'),
                     ('English:', f'{dataset["english"]}'),
@@ -518,9 +520,10 @@ def save_document(dataset, user_id):
         os.remove(f'./{dataset["COVID_Photo"]}') 
 
 
-    if dataset["doc_course_access"]=="yes":
-        doc.add_picture(f'./{dataset["Course_Photo"]}', height = Mm(100))
-        os.remove(f'./{dataset["Course_Photo"]}') 
+    if dataset["course_access"]=="yes":         
+        if dataset["doc_course_access"]=="yes":
+            doc.add_picture(f'./{dataset["Course_Photo"]}', height = Mm(100))
+            os.remove(f'./{dataset["Course_Photo"]}') 
 
     
 
@@ -532,3 +535,4 @@ def save_document(dataset, user_id):
     # table11.columns[0].width = Cm(16)
     # Save the document
     doc.save(f'{dataset["full_name"]}_{user_id}.docx')
+    return(_('Ваше резюме успешно отправлено!', dataset['language']))
