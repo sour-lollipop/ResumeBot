@@ -7,7 +7,7 @@ from aiogram.filters.command import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import FSInputFile, URLInputFile, BufferedInputFile
+from aiogram.types import FSInputFile, URLInputFile, BufferedInputFile, InputFile
 from aiogram.fsm.strategy import FSMStrategy
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import html
@@ -408,7 +408,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(Oman = callback.data.split('_')[1])
-    await callback.message.edit_text(_('Оброзование', data['language'])+'\n'+
+    await callback.message.edit_text(_('Образование', data['language'])+'\n'+
                                      _('Какая степень у вас была получена (бакалавр, магистр, специалист и т.д.)?', data['language']))
     await state.set_state(Candidate_States.Education_degree)
 
@@ -699,7 +699,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.edit_text(_('Опишите ваш опыт работы', data['language']))
         await state.set_state(Candidate_States.Now_work_exp)
     else:
-        await state.set_state(Candidate_States.Comp_programs)
+        await callback.message.answer(_('Работали ли вы с компьютерными программами для гостеприимства?', data['language'])+'\n'+
+                            _('Если да, напишите название, если нет введите "нет"', data['language']))
+        await state.set_state(Candidate_States.Hoste_program)
 
 
 @dp.message(Candidate_States.Now_work_exp)
@@ -740,13 +742,13 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
 
 
 # **************************************
-@dp.message(Candidate_States.Comp_programs)
-async def save_desired_positions(message: types.Message, state: FSMContext):
-    # await state.update_data(work_responsibilities = message.text)
-    data  = await state.get_data()
-    await message.answer(_('Работали ли вы с компьютерными программами для гостеприимства?', data['language'])+'\n'+
-                            _('Если да, напишите название, если нет введите "нет"', data['language']))
-    await state.set_state(Candidate_States.Hoste_program)
+# @dp.message(Candidate_States.Comp_programs)
+# async def save_desired_positions(message: types.Message, state: FSMContext):
+#     # await state.update_data(work_responsibilities = message.text)
+#     data  = await state.get_data()
+#     await message.answer(_('Работали ли вы с компьютерными программами для гостеприимства?', data['language'])+'\n'+
+#                             _('Если да, напишите название, если нет введите "нет"', data['language']))
+#     await state.set_state(Candidate_States.Hoste_program)
 
 @dp.message(Candidate_States.Hoste_program)
 async def save_desired_positions(message: types.Message, state: FSMContext):
@@ -836,7 +838,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     advanced = types.InlineKeyboardButton(text = _('Продвинутый', data['language']), callback_data = 'english_Advanced')
     fluent = types.InlineKeyboardButton(text = _('Носитель', data['language']), callback_data = 'english_Fluent')
     english_KB.row(basic, elementary, lowerInt, intermediate, upperInt, advanced, fluent).adjust(3,3)
-    await callback.message.edit_text(_('На каком уровне вы знаете английски язык?', data['language']),
+    await callback.message.edit_text(_('На каком уровне вы знаете английский язык?', data['language']),
                                       reply_markup = english_KB.as_markup())
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('english'))
@@ -970,7 +972,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             f'{_("ОАЭ для переезда и работы", data["language"])} : {data["UAE"]} \n'
             f'{_("Бахрейн для переезда и работы", data["language"])} : {data["Bahrain"]} \n'
             f'{_("Оман для переезда и работы", data["language"])} : {data["Oman"]} \n'
-            f'{_("Оброзование (степень)", data["language"])} : {data["education_stepen"]} \n'
+            f'{_("Образование (степень)", data["language"])} : {data["education_stepen"]} \n'
             f'{_("Наименование вуза или колледжа", data["language"])} : {data["university_name"]} \n'
             f'{_("Специализация или факультет", data["language"])} : {data["special_degree"]} \n'
             f'{_("Годы обучения", data["language"])} : {data["year_of_Education"]} \n'
@@ -1084,10 +1086,10 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     # url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msg}"
     print(requests.get(url).json())
-    save_document(data, callback.message.from_user.id)
 
+    end_msg = save_document(data, callback.message.from_user.id)
     
-    await callback.message.edit_text(_('Ваше резюме успешно отправлено!', data['language']))
+    await callback.message.edit_text(end_msg)
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('Delete_data'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
