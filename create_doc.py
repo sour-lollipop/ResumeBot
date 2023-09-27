@@ -535,4 +535,4 @@ def save_document(dataset, user_id):
     # table11.columns[0].width = Cm(16)
     # Save the document
     doc.save(f'{dataset["full_name"]}_{user_id}.docx')
-    return(_('Ваше резюме успешно отправлено!', dataset['language']))
+    return(f'{dataset["full_name"]}_{user_id}.docx')

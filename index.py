@@ -13,7 +13,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import html
 from aiogram import F
 from docx import Document 
-
+from send_doc import send_email
 from translations import _
 from create_doc import save_document
 
@@ -175,8 +175,13 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
 @dp.callback_query(lambda c: c.data and c.data.startswith('married'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     married = callback.data.split('_')[1]
-    await state.update_data(married = married)
     data  = await state.get_data()
+    if married == 'Y':
+        await state.update_data(married = _('Да',data['language']))
+    else:
+        await state.update_data(married = _('Нет',data['language']))
+        
+    
 
     child_KB = InlineKeyboardBuilder()
     child_Y = types.InlineKeyboardButton(text = _('Да',data['language']), callback_data = 'child_Y')
@@ -189,8 +194,12 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
 @dp.callback_query(lambda c: c.data and c.data.startswith('child'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     Have_any_children = callback.data.split('_')[1]
-    await state.update_data(have_any_children = Have_any_children)
     data  = await state.get_data()
+    if Have_any_children == 'Y':
+        await state.update_data(have_any_children = _('Да',data['language']))
+    else:
+        await state.update_data(have_any_children = _('Нет',data['language']))
+
     await callback.message.edit_text(_('Введите свой рост (см)', data['language']))
     await state.set_state(Candidate_States.Height)
 
@@ -245,8 +254,12 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
 @dp.callback_query(lambda c: c.data and c.data.startswith('haveP'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     haveP_ = callback.data.split('_')[1]
-    await state.update_data(haveP_ = haveP_)
     data  = await state.get_data()
+    if haveP_ == 'Y':
+        await state.update_data(haveP_ = _('Да',data['language']))
+    else:
+        await state.update_data(haveP_ = _('Нет',data['language']))
+
 
     covid_KB = InlineKeyboardBuilder()
     covid_Y = types.InlineKeyboardButton(text = _('Да',data['language']), callback_data = 'covid_Yes')
@@ -985,7 +998,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             f'{_("Годы обучения (Последипломное образование)", data["language"])} : {data["postgraduate_date"]} \n'
             )
         else: 
-            foure_block = 'have not postgraduate \n'
+            foure_block = ''
         
         if data["course_access"]=="yes":
             fifth_block = (
@@ -1000,13 +1013,13 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
                 fifth_block+=f'{_("Наличие сертификата пройденного курса", data["language"])} : {_("Нет", data["language"])} \n'
 
         else: 
-            fifth_block = 'have not course \n'
+            fifth_block = ''
 
         if data["tattoo_access"]=="yes":
             six_block = f'{_("Описание тату или пирсинга", data["language"])} : {data["tattoo_discribe"]} \n'
             tattoo_Photo= data["tattoo_Photo"]
         else: 
-            six_block = 'have not tattoo \n'
+            six_block = ''
 
         seventh_block = (
             f'{_("Опыт работы", data["language"])} : {data["work_exp"]} \n'
@@ -1025,7 +1038,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             f'{_("Ваши обязанности", data["language"])} : {data["other_work_responsibilities"]} \n'
             )
         else: 
-            eithg_block = 'have not other work \n'
+            eithg_block = ''
         
         if data["now_work_access"]=="yes":
             nine_block = (
@@ -1037,7 +1050,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             f'{_("Ваши обязанности", data["language"])} : {data["now_work_responsibilities"]} \n'
             )
         else: 
-            nine_block = 'have not other work \n'
+            nine_block = ''
         
         tenth_block = (
             f'{_("Компьютерные программы, с которыми вы работаете", data["language"])} \n'
@@ -1051,7 +1064,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             car_category = f'{_("Категория водительских прав", data["language"])} : {data["car_category"]} \n'
             eleventh_block = f'car_category : {data["car_category"]} \n'
         else: 
-            eleventh_block = 'have not car passport \n'
+            eleventh_block = ''
 
         twelvth_block = (
             f'{_("Уровень русского языка", data["language"])} : {data["russian"]} \n'
@@ -1064,7 +1077,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             f'{_("Уровень дополнительного языка", data["language"])} : {data["other_lang_level"]} \n'
             )
         else: 
-            third_block = 'have not other lang \n'
+            third_block = ''
         
         fourth_block =  f'know_about_as : {data["know_about_as"]} \n'
         fifth_block = f'{_("Дата создания заявки", data["language"])} : {callback.message.date.strftime("%d %B %H:%M")} \n'
@@ -1083,13 +1096,15 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     msg = f'Новое резюме: {data["full_name"] }'
-    # url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msg}"
     print(requests.get(url).json())
 
     end_msg = save_document(data, callback.message.from_user.id)
-    
-    await callback.message.edit_text(end_msg)
+    send_email('Arlen.abizh@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}')
+    final = send_email('dossymkhanova.a@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}')
+    os.remove(f'./{end_msg}')
+    await callback.message.edit_text(final)
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('Delete_data'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
