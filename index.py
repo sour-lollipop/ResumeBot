@@ -938,6 +938,18 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         true_info_kb.row(yes, no)
         await callback.message.edit_text(_('Я подтверждаю, что вся информация, указанная в этом резюме, соответствует действительности.', data['language']),
                                       reply_markup = true_info_kb.as_markup())
+    else:
+
+        os.remove(f'./{data["profile_Photo"]}') 
+        
+        if 'COVID_Photo' in data:
+            os.remove(f'./{data["COVID_Photo"]}') 
+        if 'Course_Photo' in data:
+            os.remove(f'./{data["Course_Photo"]}') 
+        if 'tattoo_Photo' in data:
+            os.remove(f'./{data["tattoo_Photo"]}') 
+
+
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('true_info'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
@@ -1091,7 +1103,17 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         print('\n data_set: \n')
         print(data)
         await callback.message.edit_text(_('Ваши данные', data['language'])+f'\n{message_data}',reply_markup = send_kb.as_markup())
+    else:
 
+        os.remove(f'./{data["profile_Photo"]}') 
+        
+        if 'COVID_Photo' in data:
+            os.remove(f'./{data["COVID_Photo"]}') 
+        if 'Course_Photo' in data:
+            os.remove(f'./{data["Course_Photo"]}') 
+        if 'tattoo_Photo' in data:
+            os.remove(f'./{data["tattoo_Photo"]}') 
+            
 @dp.callback_query(lambda c: c.data and c.data.startswith('Save_data'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()

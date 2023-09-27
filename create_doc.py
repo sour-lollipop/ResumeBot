@@ -515,19 +515,15 @@ def save_document(dataset, user_id):
 
     os.remove(f'./{dataset["profile_Photo"]}') 
 
-    if dataset["covid_access"] == "Yes":
+    if 'covid_access' in dataset:
         doc.add_picture(f'./{dataset["COVID_Photo"]}', height = Mm(100))
         os.remove(f'./{dataset["COVID_Photo"]}') 
 
-
-    if dataset["course_access"]=="yes":         
-        if dataset["doc_course_access"]=="yes":
+    if 'Course_Photo' in dataset:
             doc.add_picture(f'./{dataset["Course_Photo"]}', height = Mm(100))
             os.remove(f'./{dataset["Course_Photo"]}') 
 
-    
-
-    if dataset["tattoo_access"]=="yes":
+    if 'tattoo_Photo' in dataset:
         doc.add_picture(f'./{dataset["tattoo_Photo"]}', height = Mm(100))
         os.remove(f'./{dataset["tattoo_Photo"]}') 
 
