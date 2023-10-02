@@ -21,8 +21,11 @@ class Candidate_States(StatesGroup):
     Desired_positions = State()
     Full_name = State()
     Profile_photo = State()
+    Year_of_birth = State()
+    Month_of_birth = State()
     Date_of_birth = State()
     Place_of_birth = State()
+    City_of_birth = State()
     Marital_status = State()
     Have_any_children = State()
     Height = State()
@@ -84,18 +87,23 @@ class Candidate_States(StatesGroup):
     Now_work_position = State()
     Now_work_responsibilities = State()
     
-    Comp_programs = State()
     Hoste_program = State()
     Finance_program = State()
     Travel_program = State()
     Graph_program = State()
-    
+    Other_programs = State()
+
     Car_category = State()
     Added_language = State()
+
+    Add_Photo = State()
+    Add_Photo2 = State()
+    Add_Photo3 = State()
+    Add_Photo4 = State()
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 # Объект бота
-TOKEN = "6439782775:AAGjeVKXRcGFuJih7ZkEo12xyDI-udRz2N4"
+TOKEN = "6681000920:AAGZKsmxgKs3nRry-Gkjgm3a64HlhjdK48U"
 bot = Bot(token=TOKEN)
 
 # Диспетчер
@@ -133,9 +141,11 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     data  = await state.get_data()
     # await message.answer(_('Отправьте фото своего профиля, как показано здесь:', data['language']))
     
-    image_from_pc = FSInputFile("userquest.jpg")
+    # image_from_pc = FSInputFile("userquest.jpg")
+    image_from_url = URLInputFile("https://lis.4dev.kz/anon/ivxg75m83y.jpg")
+
     await message.answer_photo(
-        image_from_pc,
+        image_from_url,
         caption=_('Отправьте фото своего профиля, как показано здесь:', data['language'])
     )
     await state.set_state(Candidate_States.Profile_photo)
@@ -148,19 +158,40 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     )
     await state.update_data(profile_Photo = f"{message.photo[-1].file_id}.jpg")
     data  = await state.get_data()
-    await message.answer(_('Введите свою дату рождения', data['language']))
+    await message.answer(_('Введите свой год рождения', data['language']))
+    await state.set_state(Candidate_States.Year_of_birth)
+
+@dp.message(Candidate_States.Year_of_birth)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(y_birth = message.text)
+    data  = await state.get_data()
+    await message.answer(_("Введите свой месяц рождения", data['language']))
+    await state.set_state(Candidate_States.Month_of_birth)
+
+@dp.message(Candidate_States.Month_of_birth)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(m_birth = message.text)
+    data  = await state.get_data()
+    await message.answer(_("Введите свой день рождения", data['language']))
     await state.set_state(Candidate_States.Date_of_birth)
 
 @dp.message(Candidate_States.Date_of_birth)
 async def save_desired_positions(message: types.Message, state: FSMContext):
-    await state.update_data(date_of_birth = message.text)
+    await state.update_data(d_birth = message.text)
     data  = await state.get_data()
-    await message.answer(_('Введите место вашего рождения', data['language']))
+    await message.answer(_("Введите Страну , где вы родились", data['language']))
     await state.set_state(Candidate_States.Place_of_birth)
 
 @dp.message(Candidate_States.Place_of_birth)
 async def save_desired_positions(message: types.Message, state: FSMContext):
-    await state.update_data(place_of_birth = message.text)
+    await state.update_data(c_birth = message.text)
+    data  = await state.get_data()
+    await message.answer(_("Введите город или поселок рождения", data['language']))
+    await state.set_state(Candidate_States.City_of_birth)
+
+@dp.message(Candidate_States.City_of_birth)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(c_or_v_birth = message.text)
     data  = await state.get_data()
 
     marry_KB = InlineKeyboardBuilder()
@@ -273,24 +304,24 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     covid = callback.data.split('_')[1]
     await state.update_data(covid_access = covid)
     data  = await state.get_data()
-    if covid == 'Yes':
-        await callback.message.edit_text(_('Отправьте сертификат вакцинации',data['language']))
-        await state.set_state(Candidate_States.COVID_Photo)
-    else:
-        await callback.message.edit_text(_('Введите ваш номер мобильного телефона',data['language'])) 
-        await state.set_state(Candidate_States.Phone_Number)
-
-
-@dp.message(F.photo, Candidate_States.COVID_Photo)
-async def save_desired_positions(message: types.Message, state: FSMContext):
-    await bot.download(
-        message.photo[-1],
-        destination=f"{message.photo[-1].file_id}.jpg"
-    )
-    await state.update_data(COVID_Photo = f"{message.photo[-1].file_id}.jpg")
-    data  = await state.get_data()
-    await message.answer(_('Введите ваш номер мобильного телефона',data['language'])) 
+    # if covid == 'Yes':
+    #     await callback.message.edit_text(_('Отправьте сертификат вакцинации',data['language']))
+    #     await state.set_state(Candidate_States.COVID_Photo)
+    # else:
+    await callback.message.edit_text(_('Введите ваш номер мобильного телефона',data['language'])) 
     await state.set_state(Candidate_States.Phone_Number)
+
+
+# @dp.message(F.photo, Candidate_States.COVID_Photo)
+# async def save_desired_positions(message: types.Message, state: FSMContext):
+#     await bot.download(
+#         message.photo[-1],
+#         destination=f"{message.photo[-1].file_id}.jpg"
+#     )
+#     await state.update_data(COVID_Photo = f"{message.photo[-1].file_id}.jpg")
+#     data  = await state.get_data()
+#     await message.answer(_('Введите ваш номер мобильного телефона',data['language'])) 
+#     await state.set_state(Candidate_States.Phone_Number)
 
 @dp.message(Candidate_States.Phone_Number)
 async def save_desired_positions(message: types.Message, state: FSMContext):
@@ -465,7 +496,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(postgraduate_access = callback.data.split('_')[1])
     if 'yes' == callback.data.split('_')[1]:
-        await callback.message.answer(_('В каком учебном заведении вы продолжали образование после получения степени?', data['language']))
+        await callback.message.edit_text(_('В каком учебном заведении вы продолжали образование после получения степени?', data['language']))
         await state.set_state(Candidate_States.Postgraduate_name)
     else:
         course_KB = InlineKeyboardBuilder() 
@@ -513,7 +544,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(course_access = callback.data.split('_')[1])
     if 'yes'==callback.data.split('_')[1]:
-        await callback.message.answer(_('Введите один курс, которы вы прошли', data['language']))
+        await callback.message.edit_text(_('Введите один курс, который вы прошли', data['language']))
         await state.set_state(Candidate_States.Course_name)
     else:
         tattoo_KB = InlineKeyboardBuilder() 
@@ -553,7 +584,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     await state.update_data(doc_course_access = callback.data.split('_')[2])
     data  = await state.get_data()
     if 'yes'==callback.data.split('_')[2]:
-        await callback.message.answer(_('Отправьте одно фото', data['language']))
+        await callback.message.edit_text(_('Отправьте одно фото', data['language']))
         await state.set_state(Candidate_States.Course_photo)
     else:
         tattoo_KB = InlineKeyboardBuilder() 
@@ -583,11 +614,11 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(tattoo_access = callback.data.split('_')[1])
     if 'yes'==callback.data.split('_')[1]:
-        await callback.message.answer(_('Опишите татуировку или пирсинг', data['language']))
+        await callback.message.edit_text(_('Опишите татуировку или пирсинг', data['language']))
         await state.set_state(Candidate_States.Tattoo_discribe)
     else:
-        await callback.message.edit_text(_('Опишите ваш опыт работы', data['language'])+'\n'+
-                                         _('Официальный и не официальный начиная с последнего или текущего места работы', data['language']))
+        await callback.message.edit_text(_('Введите год работы (начало-конец)', data['language'])+'\n'+
+                                         _('Официальный и неофициальный начиная с последнего или текущего места работы', data['language']))
         await state.set_state(Candidate_States.Work_exp)
 # ********************************
 @dp.message(Candidate_States.Tattoo_discribe)
@@ -605,8 +636,8 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     )
     await state.update_data(tattoo_Photo = f"{message.photo[-1].file_id}.jpg")
     data  = await state.get_data()
-    await message.answer(_('Опишите ваш опыт работы', data['language'])+'\n'+
-                            _('Официальный и не официальный начиная с последнего или текущего места работы', data['language']))
+    await message.answer(_("Введите год работы (начало-конец)", data['language'])+'\n'+
+                            _('Официальный и неофициальный начиная с последнего или текущего места работы', data['language']))
     await state.set_state(Candidate_States.Work_exp)
 
 @dp.message(Candidate_States.Work_exp)
@@ -653,14 +684,14 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(other_work_access = callback.data.split('_')[2])
     if 'yes'==callback.data.split('_')[2]:
-        await callback.message.edit_text(_('Опишите ваш опыт работы', data['language']))
+        await callback.message.edit_text(_("Введите год работы (начало-конец)", data['language']))
         await state.set_state(Candidate_States.Other_work_exp)
     else:
         now_work_KB = InlineKeyboardBuilder()
         yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'now_work_yes')
         no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'now_work_no')
         now_work_KB.row(yes,no)
-        await callback.message.answer(_('Работаете ли вы сейчас?', data['language']),
+        await callback.message.edit_text(_('Работаете ли вы сейчас?', data['language']),
                             reply_markup=now_work_KB.as_markup())
 
 @dp.message(Candidate_States.Other_work_exp)
@@ -709,10 +740,10 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(now_work_access = callback.data.split('_')[2])
     if 'yes'==callback.data.split('_')[2]:
-        await callback.message.edit_text(_('Опишите ваш опыт работы', data['language']))
-        await state.set_state(Candidate_States.Now_work_exp)
+        await callback.message.edit_text(_("Введите год работы (начало-конец)", data['language']))
+        await state.edit_text(Candidate_States.Now_work_exp)
     else:
-        await callback.message.answer(_('Работали ли вы с компьютерными программами для гостеприимства?', data['language'])+'\n'+
+        await callback.message.edit_text(_('Работали ли вы с компьютерными программами для гостеприимства?', data['language'])+'\n'+
                             _('Если да, напишите название, если нет введите "нет"', data['language']))
         await state.set_state(Candidate_States.Hoste_program)
 
@@ -754,15 +785,6 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.set_state(Candidate_States.Hoste_program)
 
 
-# **************************************
-# @dp.message(Candidate_States.Comp_programs)
-# async def save_desired_positions(message: types.Message, state: FSMContext):
-#     # await state.update_data(work_responsibilities = message.text)
-#     data  = await state.get_data()
-#     await message.answer(_('Работали ли вы с компьютерными программами для гостеприимства?', data['language'])+'\n'+
-#                             _('Если да, напишите название, если нет введите "нет"', data['language']))
-#     await state.set_state(Candidate_States.Hoste_program)
-
 @dp.message(Candidate_States.Hoste_program)
 async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.update_data(hoste_program = message.text)
@@ -791,6 +813,14 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
 @dp.message(Candidate_States.Graph_program)
 async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.update_data(graph_program = message.text)
+    data  = await state.get_data()
+    await message.answer(_("Работали ли вы с другими компьютерными программами?", data['language'])+'\n'+
+                            _('Если да, напишите название, если нет введите "нет"', data['language']))
+    await state.set_state(Candidate_States.Other_programs)
+
+@dp.message(Candidate_States.Other_programs)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await state.update_data(other_programs = message.text)
     data  = await state.get_data()
     car_KB = InlineKeyboardBuilder() 
     yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'car_yes')
@@ -921,12 +951,146 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(know_about_as = callback.data.split('_')[3])
+    more_phote_kb = InlineKeyboardBuilder()
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'Added_More_Photo_Yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Added_More_Photo_No')
+    more_phote_kb.row(yes, no)
+    await callback.message.edit_text(_('Есть ли еще какие-то фотографии, которые вы бы хотели добавить?', data['language']),
+                                  reply_markup = more_phote_kb.as_markup())
+
+@dp.callback_query(lambda c: c.data and c.data.startswith('Added_More_Photo'))
+async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    data  = await state.get_data()
+    if callback.data.split('_')[3] == 'Yes':
+        await callback.message.edit_text(_('Отправьте одно фото', data['language']))
+        await state.set_state(Candidate_States.Add_Photo)
+
+    else:
+        agree_24_kb = InlineKeyboardBuilder()
+        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
+        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
+        agree_24_kb.row(yes, no)
+        await callback.message.edit_text(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
+                                    reply_markup = agree_24_kb.as_markup())
+
+@dp.message(F.photo,Candidate_States.Add_Photo)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await bot.download(
+        message.photo[-1],
+        destination=f"{message.photo[-1].file_id}.jpg"
+    )
+    data  = await state.get_data()
+    await state.update_data(more_Photo = f"{message.photo[-1].file_id}.jpg")
+    # print('dataset: ', data['more_Photo'])
+
+    more_phote_kb = InlineKeyboardBuilder()
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'SecondAdded_More_Photo_Yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'SecondAdded_More_Photo_No')
+    more_phote_kb.row(yes, no)
+    await message.answer(_('Есть ли еще какие-то фотографии, которые вы бы хотели добавить?', data['language']),
+                                  reply_markup = more_phote_kb.as_markup())
+
+
+@dp.callback_query(lambda c: c.data and c.data.startswith('SecondAdded_More_Photo'))
+async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    data  = await state.get_data()
+    if callback.data.split('_')[3] == 'Yes':
+        await callback.message.edit_text(_('Отправьте одно фото', data['language']))
+        await state.set_state(Candidate_States.Add_Photo2)
+
+    else:
+        agree_24_kb = InlineKeyboardBuilder()
+        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
+        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
+        agree_24_kb.row(yes, no)
+        await callback.message.edit_text(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
+                                    reply_markup = agree_24_kb.as_markup())
+        
+@dp.message(F.photo,Candidate_States.Add_Photo2)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await bot.download(
+        message.photo[-1],
+        destination=f"{message.photo[-1].file_id}.jpg"
+    )
+    data  = await state.get_data()
+    await state.update_data(more_Photo2 = f"{message.photo[-1].file_id}.jpg")
+    # print('dataset: ', data['more_Photo2'])
+
+    more_phote_kb = InlineKeyboardBuilder()
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'ThirdAdded_More_Photo_Yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'ThirddAdded_More_Photo_No')
+    more_phote_kb.row(yes, no)
+    await message.answer(_('Есть ли еще какие-то фотографии, которые вы бы хотели добавить?', data['language']),
+                                  reply_markup = more_phote_kb.as_markup())
+    
+
+
+@dp.callback_query(lambda c: c.data and c.data.startswith('ThirddAdded_More_Photo'))
+async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    data  = await state.get_data()
+    if callback.data.split('_')[3] == 'Yes':
+        await callback.message.edit_text(_('Отправьте одно фото', data['language']))
+        await state.set_state(Candidate_States.Add_Photo3)
+
+    else:
+        agree_24_kb = InlineKeyboardBuilder()
+        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
+        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
+        agree_24_kb.row(yes, no)
+        await callback.message.edit_text(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
+                                    reply_markup = agree_24_kb.as_markup())
+        
+@dp.message(F.photo,Candidate_States.Add_Photo3)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await bot.download(
+        message.photo[-1],
+        destination=f"{message.photo[-1].file_id}.jpg"
+    )
+    data  = await state.get_data()
+    await state.update_data(more_Photo3 = f"{message.photo[-1].file_id}.jpg")
+    # print('dataset: ', data['more_Photo3'])
+
+    more_phote_kb = InlineKeyboardBuilder()
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'FourthAdded_More_Photo_Yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'FourthAdded_More_Photo_No')
+    more_phote_kb.row(yes, no)
+    await message.answer(_('Есть ли еще какие-то фотографии, которые вы бы хотели добавить?', data['language']),
+                                  reply_markup = more_phote_kb.as_markup())
+
+
+@dp.callback_query(lambda c: c.data and c.data.startswith('FourthAdded_More_Photo'))
+async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    data  = await state.get_data()
+    if callback.data.split('_')[3] == 'Yes':
+        await callback.message.edit_text(_('Отправьте одно фото', data['language']))
+        await state.set_state(Candidate_States.Add_Photo4)
+
+    else:
+        agree_24_kb = InlineKeyboardBuilder()
+        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
+        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
+        agree_24_kb.row(yes, no)
+        await callback.message.edit_text(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
+                                    reply_markup = agree_24_kb.as_markup())
+        
+@dp.message(F.photo,Candidate_States.Add_Photo4)
+async def save_desired_positions(message: types.Message, state: FSMContext):
+    await bot.download(
+        message.photo[-1],
+        destination=f"{message.photo[-1].file_id}.jpg"
+    )
+    data  = await state.get_data()
+    await state.update_data(more_Photo4 = f"{message.photo[-1].file_id}.jpg")
+    # print('dataset: ', data['more_Photo4'])
+
     agree_24_kb = InlineKeyboardBuilder()
     yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
     no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
     agree_24_kb.row(yes, no)
-    await callback.message.edit_text(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
-                                  reply_markup = agree_24_kb.as_markup())
+    await message.answer(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
+                                reply_markup = agree_24_kb.as_markup())
+
+
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('agree_24'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
@@ -963,8 +1127,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             f'{ _("ФИО", data["language"])} : {data["full_name"]} \n'
             f'{ _("Желаемые должности", data["language"])} : {data["desired_positions"]} \n'
             # f'profile_Photo : {data["profile_Photo"]} \n'
-            f'{ _("Дата рождения", data["language"])} : {data["date_of_birth"]} \n'
-            f'{ _("Место рождения", data["language"])} : {data["place_of_birth"]} \n'
+            f'{ _("Дата рождения", data["language"])} : {data["y_birth"]}\{data["m_birth"]}\{data["d_birth"]} \n'
+            f'{ _("Страна рождения", data["language"])} : {data["c_birth"]} \n'
+            f'{ _("Город или поселок рождения", data["language"])} : {data["c_or_v_birth"]} \n'
             f'{ _("Семейное положение", data["language"])} : {data["married"]} \n'
             f'{ _("Наличие детей", data["language"])} : {data["have_any_children"]} \n'
             f'{ _("Рост (cm)", data["language"])} : {data["height"]} \n'
@@ -977,7 +1142,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             )
         if data["covid_access"]=="Yes":
             second_block = f'{_("Вакцинация от COVID", data["language"])} : {_("Да", data["language"])} \n'
-            covid_photo = data["COVID_Photo"]
+            # covid_photo = data["COVID_Photo"]
         else: 
             second_block = f'{_("Вакцинация от COVID", data["language"])} : {_("Нет", data["language"])} \n'
         third_block =(
@@ -1034,7 +1199,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             six_block = ''
 
         seventh_block = (
-            f'{_("Опыт работы", data["language"])} : {data["work_exp"]} \n'
+            f'{_("Год работы", data["language"])} : {data["work_exp"]} \n'
             f'{_("Имя компании", data["language"])} : {data["work_name"]} \n'
             f'{_("Местоположение компании", data["language"])} : {data["work_place"]} \n'
             f'{_("Должность", data["language"])} : {data["work_position"]} \n'
@@ -1043,7 +1208,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         
         if data["other_work_access"]=="yes":
             eithg_block = (
-            f'{_("Опыт работы", data["language"])} : {data["other_work_exp"]} \n'
+            f'{_("Год работыы", data["language"])} : {data["other_work_exp"]} \n'
             f'{_("Имя компании", data["language"])} : {data["other_work_name"]} \n'
             f'{_("Местоположение компании", data["language"])} : {data["other_work_place"]} \n'
             f'{_("Должность", data["language"])} : {data["other_work_position"]} \n'
@@ -1055,7 +1220,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         if data["now_work_access"]=="yes":
             nine_block = (
             f'{_("Работа (сечас)", data["language"])}\n'
-            f'{_("Опыт работы", data["language"])} : {data["now_work_exp"]} \n'
+            f'{_("Год работы", data["language"])} : {data["now_work_exp"]} \n'
             f'{_("Имя компании", data["language"])} : {data["now_work_name"]} \n'
             f'{_("Местоположение компании", data["language"])} : {data["now_work_place"]} \n'
             f'{_("Должность", data["language"])} : {data["now_work_position"]} \n'
@@ -1070,6 +1235,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             f'{_("для финансов", data["language"])} : {data["finance_program"]} \n'
             f'{_("для путешествий и бронирования", data["language"])} : {data["travel_program"]} \n'
             f'{_("для графики и дизайн", data["language"])} : {data["graph_program"]} \n'
+            f'{_("для других целей", data["language"])} : {data["other_programs"]} \n'
             )
         
         if data["car_access"]=="yes":
@@ -1094,33 +1260,45 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         fourth_block =  f'know_about_as : {data["know_about_as"]} \n'
         fifth_block = f'{_("Дата создания заявки", data["language"])} : {callback.message.date.strftime("%d %B %H:%M")} \n'
 
+        await state.update_data(msg_date = callback.message.date.strftime("%d %B %H:%M"))
+
         message_data = (first_block + second_block + third_block + foure_block + fifth_block + 
                         six_block + seventh_block + eithg_block + nine_block + tenth_block +
                         eleventh_block + twelvth_block + third_block + fifth_block )
         await state.update_data(resume_creating_date = callback.message.date.strftime("%d %B %H:%M"))
         
-        print('Ваши данные \n'+f'{message_data}')
-        print('\n data_set: \n')
-        print(data)
+        # print('Ваши данные \n'+f'{message_data}')
+        # print('\n data_set: \n')
+        # print(data)
         await callback.message.edit_text(_('Ваши данные', data['language'])+f'\n{message_data}',reply_markup = send_kb.as_markup())
     else:
 
         os.remove(f'./{data["profile_Photo"]}') 
         
-        if 'COVID_Photo' in data:
-            os.remove(f'./{data["COVID_Photo"]}') 
+        # if 'COVID_Photo' in data:
+        #     os.remove(f'./{data["COVID_Photo"]}') 
         if 'Course_Photo' in data:
             os.remove(f'./{data["Course_Photo"]}') 
         if 'tattoo_Photo' in data:
             os.remove(f'./{data["tattoo_Photo"]}') 
+
+        if 'more_Photo' in data:
+            os.remove(f'./{data["more_Photo"]}') 
+        if 'more_Photo2' in data:
+            os.remove(f'./{data["more_Photo2"]}') 
+        if 'more_Photo3' in data:
+            os.remove(f'./{data["more_Photo3"]}') 
+        if 'more_Photo4' in data:
+            os.remove(f'./{data["more_Photo4"]}') 
             
 @dp.callback_query(lambda c: c.data and c.data.startswith('Save_data'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     msg = f'Новое резюме: {data["full_name"] }'
+    msgdata = f'Новое резюме: {data["full_name"] }_{data}'
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msg}"
-    print(requests.get(url).json())
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msgdata}"
+    # print(requests.get(url).json())
 
     end_msg = save_document(data, callback.message.from_user.id)
     send_email('Arlen.abizh@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}')
@@ -1165,17 +1343,6 @@ async def main():
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
     
-def replace_text(doc, old_text, new_text):
-    for table in doc.tables:
-        for row in table.rows:
-            for cell in row.cells:
-                for paragraph in cell.paragraphs:
-                    if old_text in paragraph.text:
-                        inline = paragraph.runs
-                        for i in range(len(inline)):
-                            if old_text in inline[i].text:
-                                text = inline[i].text.replace(old_text, new_text)
-                                inline[i].text = text
 
 if __name__ == "__main__":
     asyncio.run(main())
