@@ -40,10 +40,10 @@ class Candidate_States(StatesGroup):
     Messenger = State()
     
     Email = State()
-    Facebook = State()
+    # Facebook = State()
     Instagram = State()
-    LinkedIn = State()
-    Vkontakte = State()
+    # LinkedIn = State()
+    # Vkontakte = State()
     
     Name_cousen = State()
     Phone_Number_cousen = State()
@@ -100,6 +100,9 @@ class Candidate_States(StatesGroup):
     Add_Photo2 = State()
     Add_Photo3 = State()
     Add_Photo4 = State()
+
+    Srok_job = State()
+
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 # Объект бота
@@ -121,6 +124,27 @@ async def cmd_start(message: types.Message, state: FSMContext):
                          reply_markup = lang_kb.as_markup()
                          )
     
+@dp.message(Command("stop"))
+async def cmd_start(message: types.Message, state: FSMContext):
+    data  = await state.get_data()
+    if 'Course_Photo' in data:
+        os.remove(f'./{data["profile_Photo"]}') 
+    if 'Course_Photo' in data:
+            os.remove(f'./{data["Course_Photo"]}') 
+    if 'tattoo_Photo' in data:
+        os.remove(f'./{data["tattoo_Photo"]}') 
+    if 'more_Photo' in data:
+        os.remove(f'./{data["more_Photo"]}') 
+    if 'more_Photo2' in data:
+        os.remove(f'./{data["more_Photo2"]}') 
+    if 'more_Photo3' in data:
+        os.remove(f'./{data["more_Photo3"]}') 
+    if 'more_Photo4' in data:
+        os.remove(f'./{data["more_Photo4"]}') 
+    await state.clear()
+    await message.answer("Процесс остановлен / Process stopped")
+    
+    
 @dp.callback_query(lambda c: c.data and c.data.startswith('lang'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     language = callback.data.split('_')[1]
@@ -131,7 +155,22 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
 @dp.message(Candidate_States.Desired_positions)
 async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.update_data(desired_positions = message.text)
+    
     data  = await state.get_data()
+    if 'Course_Photo' in data:
+        os.remove(f'./{data["profile_Photo"]}') 
+    if 'Course_Photo' in data:
+            os.remove(f'./{data["Course_Photo"]}') 
+    if 'tattoo_Photo' in data:
+        os.remove(f'./{data["tattoo_Photo"]}') 
+    if 'more_Photo' in data:
+        os.remove(f'./{data["more_Photo"]}') 
+    if 'more_Photo2' in data:
+        os.remove(f'./{data["more_Photo2"]}') 
+    if 'more_Photo3' in data:
+        os.remove(f'./{data["more_Photo3"]}') 
+    if 'more_Photo4' in data:
+        os.remove(f'./{data["more_Photo4"]}') 
     await message.answer(_('Введите свое ФИО', data['language']))
     await state.set_state(Candidate_States.Full_name)
 
@@ -344,30 +383,30 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     await message.answer(_('Введите ваш Instagram', data['language']))
     await state.set_state(Candidate_States.Instagram)
 
+# @dp.message(Candidate_States.Instagram)
+# async def save_desired_positions(message: types.Message, state: FSMContext):
+#     await state.update_data(instagram = message.text)
+#     data  = await state.get_data()
+#     await message.answer(_('Введите ваш Facebook', data['language']))
+#     await state.set_state(Candidate_States.Facebook)
+
+# @dp.message(Candidate_States.Facebook)
+# async def save_desired_positions(message: types.Message, state: FSMContext):
+#     await state.update_data(Facebook = message.text)
+#     data  = await state.get_data()
+#     await message.answer(_('Введите ваш LinkedIn', data['language']))
+#     await state.set_state(Candidate_States.LinkedIn)
+
+# @dp.message(Candidate_States.LinkedIn)
+# async def save_desired_positions(message: types.Message, state: FSMContext):
+#     await state.update_data(linkedIn = message.text)
+#     data  = await state.get_data()
+#     await message.answer(_('Введите ваш ВКонтакте', data['language']))
+#     await state.set_state(Candidate_States.Vkontakte)
+
 @dp.message(Candidate_States.Instagram)
 async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.update_data(instagram = message.text)
-    data  = await state.get_data()
-    await message.answer(_('Введите ваш Facebook', data['language']))
-    await state.set_state(Candidate_States.Facebook)
-
-@dp.message(Candidate_States.Facebook)
-async def save_desired_positions(message: types.Message, state: FSMContext):
-    await state.update_data(Facebook = message.text)
-    data  = await state.get_data()
-    await message.answer(_('Введите ваш LinkedIn', data['language']))
-    await state.set_state(Candidate_States.LinkedIn)
-
-@dp.message(Candidate_States.LinkedIn)
-async def save_desired_positions(message: types.Message, state: FSMContext):
-    await state.update_data(linkedIn = message.text)
-    data  = await state.get_data()
-    await message.answer(_('Введите ваш ВКонтакте', data['language']))
-    await state.set_state(Candidate_States.Vkontakte)
-
-@dp.message(Candidate_States.Vkontakte)
-async def save_desired_positions(message: types.Message, state: FSMContext):
-    await state.update_data(vkontakte = message.text)
     data  = await state.get_data()
     await message.answer(_('Введите Контактные данные родственника на случай чрезвычайной ситуации', data['language'])+
                             '\n'+_('Введите имя вашего родственника', data['language']))
@@ -741,7 +780,7 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     await state.update_data(now_work_access = callback.data.split('_')[2])
     if 'yes'==callback.data.split('_')[2]:
         await callback.message.edit_text(_("Введите год работы (начало-конец)", data['language']))
-        await state.edit_text(Candidate_States.Now_work_exp)
+        await state.set_state(Candidate_States.Now_work_exp)
     else:
         await callback.message.edit_text(_('Работали ли вы с компьютерными программами для гостеприимства?', data['language'])+'\n'+
                             _('Если да, напишите название, если нет введите "нет"', data['language']))
@@ -966,12 +1005,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         await state.set_state(Candidate_States.Add_Photo)
 
     else:
-        agree_24_kb = InlineKeyboardBuilder()
-        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
-        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
-        agree_24_kb.row(yes, no)
-        await callback.message.edit_text(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
-                                    reply_markup = agree_24_kb.as_markup())
+        srok_job_msg = _('Какой срок вы рассматриваете для работы?', data['language']) + '\n' + _('Например, месяц, год или другой период?', data['language'])+ '\n' + _('Напишите приблизительный ответ.', data['language'])
+        await callback.message.edit_text(srok_job_msg)
+        await state.set_state(Candidate_States.Srok_job)
 
 @dp.message(F.photo,Candidate_States.Add_Photo)
 async def save_desired_positions(message: types.Message, state: FSMContext):
@@ -999,12 +1035,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         await state.set_state(Candidate_States.Add_Photo2)
 
     else:
-        agree_24_kb = InlineKeyboardBuilder()
-        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
-        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
-        agree_24_kb.row(yes, no)
-        await callback.message.edit_text(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
-                                    reply_markup = agree_24_kb.as_markup())
+        srok_job_msg = _('Какой срок вы рассматриваете для работы?', data['language']) + '\n' + _('Например, месяц, год или другой период?', data['language'])+ '\n' + _('Напишите приблизительный ответ.', data['language'])
+        await callback.message.edit_text(srok_job_msg)
+        await state.set_state(Candidate_States.Srok_job)
         
 @dp.message(F.photo,Candidate_States.Add_Photo2)
 async def save_desired_positions(message: types.Message, state: FSMContext):
@@ -1017,7 +1050,7 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     # print('dataset: ', data['more_Photo2'])
 
     more_phote_kb = InlineKeyboardBuilder()
-    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'ThirdAdded_More_Photo_Yes')
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'ThirddAdded_More_Photo_Yes')
     no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'ThirddAdded_More_Photo_No')
     more_phote_kb.row(yes, no)
     await message.answer(_('Есть ли еще какие-то фотографии, которые вы бы хотели добавить?', data['language']),
@@ -1033,12 +1066,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         await state.set_state(Candidate_States.Add_Photo3)
 
     else:
-        agree_24_kb = InlineKeyboardBuilder()
-        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
-        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
-        agree_24_kb.row(yes, no)
-        await callback.message.edit_text(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
-                                    reply_markup = agree_24_kb.as_markup())
+        srok_job_msg = _('Какой срок вы рассматриваете для работы?', data['language']) + '\n' + _('Например, месяц, год или другой период?', data['language'])+ '\n' + _('Напишите приблизительный ответ.', data['language'])
+        await callback.message.edit_text(srok_job_msg)
+        await state.set_state(Candidate_States.Srok_job)
         
 @dp.message(F.photo,Candidate_States.Add_Photo3)
 async def save_desired_positions(message: types.Message, state: FSMContext):
@@ -1066,12 +1096,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         await state.set_state(Candidate_States.Add_Photo4)
 
     else:
-        agree_24_kb = InlineKeyboardBuilder()
-        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
-        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
-        agree_24_kb.row(yes, no)
-        await callback.message.edit_text(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
-                                    reply_markup = agree_24_kb.as_markup())
+        srok_job_msg = _('Какой срок вы рассматриваете для работы?', data['language']) + '\n' + _('Например, месяц, год или другой период?', data['language'])+ '\n' + _('Напишите приблизительный ответ.', data['language'])
+        await callback.message.edit_text(srok_job_msg)
+        await state.set_state(Candidate_States.Srok_job)
         
 @dp.message(F.photo,Candidate_States.Add_Photo4)
 async def save_desired_positions(message: types.Message, state: FSMContext):
@@ -1083,35 +1110,25 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     await state.update_data(more_Photo4 = f"{message.photo[-1].file_id}.jpg")
     # print('dataset: ', data['more_Photo4'])
 
-    agree_24_kb = InlineKeyboardBuilder()
-    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'agree_24_Yes')
-    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
-    agree_24_kb.row(yes, no)
-    await message.answer(_('Я согласен подписать контракт с работодателем минимум на 24 месяца', data['language']),
-                                reply_markup = agree_24_kb.as_markup())
+    srok_job_msg = _('Какой срок вы рассматриваете для работы?', data['language']) + '\n' + _('Например, месяц, год или другой период?', data['language'])+ '\n' + _('Напишите приблизительный ответ.', data['language'])
+    await message.answer(srok_job_msg)
+    await state.set_state(Candidate_States.Srok_job)
 
 
 
-@dp.callback_query(lambda c: c.data and c.data.startswith('agree_24'))
-async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+@dp.message(Candidate_States.Srok_job)
+async def save_desired_positions(message: types.Message, state: FSMContext):
     data  = await state.get_data()
-    if 'Yes'==callback.data.split('_')[2]:
-        true_info_kb = InlineKeyboardBuilder()
-        yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'true_info_Yes')
-        no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
-        true_info_kb.row(yes, no)
-        await callback.message.edit_text(_('Я подтверждаю, что вся информация, указанная в этом резюме, соответствует действительности.', data['language']),
-                                      reply_markup = true_info_kb.as_markup())
-    else:
+    await state.update_data(srok_job = message.text)
 
-        os.remove(f'./{data["profile_Photo"]}') 
+    true_info_kb = InlineKeyboardBuilder()
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'true_info_Yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Delete_data')
+    true_info_kb.row(yes, no)
+    await message.answer(_('Я подтверждаю, что вся информация, указанная в этом резюме, соответствует действительности.', data['language']),
+                                    reply_markup = true_info_kb.as_markup())
+
         
-        if 'COVID_Photo' in data:
-            os.remove(f'./{data["COVID_Photo"]}') 
-        if 'Course_Photo' in data:
-            os.remove(f'./{data["Course_Photo"]}') 
-        if 'tattoo_Photo' in data:
-            os.remove(f'./{data["tattoo_Photo"]}') 
 
 
 
@@ -1150,9 +1167,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
             f'{_("Наличие мессенджеров (Whatsapp, Viber...)", data["language"])} : {data["messenger"]} \n'
             f'Email : {data["email"]} \n'
             f'instagram : {data["instagram"]} \n'
-            f'Facebook : {data["Facebook"]} \n'
-            f'linkedIn : {data["linkedIn"]} \n'
-            f'vkontakte : {data["vkontakte"]} \n'
+            # f'Facebook : {data["Facebook"]} \n'
+            # f'linkedIn : {data["linkedIn"]} \n'
+            # f'vkontakte : {data["vkontakte"]} \n'
             f'{_("Имя вашего родственника", data["language"])} : {data["name_cousen"]} \n'
             f'{_("Телефон вашего родственника", data["language"])} : {data["phone_Number_cousen"]} \n'
             f'{_("Тип  отношения с родственником", data["language"])} : {data["relative_cousen"]} \n'
@@ -1271,25 +1288,25 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         # print('\n data_set: \n')
         # print(data)
         await callback.message.edit_text(_('Ваши данные', data['language'])+f'\n{message_data}',reply_markup = send_kb.as_markup())
-    else:
+    # else:
 
-        os.remove(f'./{data["profile_Photo"]}') 
+    #     os.remove(f'./{data["profile_Photo"]}') 
         
-        # if 'COVID_Photo' in data:
-        #     os.remove(f'./{data["COVID_Photo"]}') 
-        if 'Course_Photo' in data:
-            os.remove(f'./{data["Course_Photo"]}') 
-        if 'tattoo_Photo' in data:
-            os.remove(f'./{data["tattoo_Photo"]}') 
+    #     # if 'COVID_Photo' in data:
+    #     #     os.remove(f'./{data["COVID_Photo"]}') 
+    #     if 'Course_Photo' in data:
+    #         os.remove(f'./{data["Course_Photo"]}') 
+    #     if 'tattoo_Photo' in data:
+    #         os.remove(f'./{data["tattoo_Photo"]}') 
 
-        if 'more_Photo' in data:
-            os.remove(f'./{data["more_Photo"]}') 
-        if 'more_Photo2' in data:
-            os.remove(f'./{data["more_Photo2"]}') 
-        if 'more_Photo3' in data:
-            os.remove(f'./{data["more_Photo3"]}') 
-        if 'more_Photo4' in data:
-            os.remove(f'./{data["more_Photo4"]}') 
+    #     if 'more_Photo' in data:
+    #         os.remove(f'./{data["more_Photo"]}') 
+    #     if 'more_Photo2' in data:
+    #         os.remove(f'./{data["more_Photo2"]}') 
+    #     if 'more_Photo3' in data:
+    #         os.remove(f'./{data["more_Photo3"]}') 
+    #     if 'more_Photo4' in data:
+    #         os.remove(f'./{data["more_Photo4"]}') 
             
 @dp.callback_query(lambda c: c.data and c.data.startswith('Save_data'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
@@ -1312,31 +1329,22 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     await state.clear()
     await callback.message.edit_text(_('Введите данные заново.', data['language'])+'\n'+_('Введите /start', data['language']))
 
-# @dp.message(Command('images'))
-# async def upload_photo(message: types.Message):
-#     file_ids = []
-#     # Отправка файла по ссылке
-#     image_from_url = URLInputFile("https://picsum.photos/seed/groosha/400/300")
-#     result = await message.answer_photo(
-#         image_from_url,
-#         caption="Изображение по ссылке"
-#     )
-#     file_ids.append(result.photo[-1].file_id)
-#     # Отправка файла по ссылке
-#     image_from_url = URLInputFile("https://ru.visafoto.com/img/docs/zz_30x40.jpg")
-#     result = await message.answer_photo(
-#         image_from_url,
-#         caption="Изображение по ссылке"
-#     )
-#     file_ids.append(result.photo[-1].file_id)
+    os.remove(f'./{data["profile_Photo"]}') 
+        
+    if 'Course_Photo' in data:
+            os.remove(f'./{data["Course_Photo"]}') 
+    if 'tattoo_Photo' in data:
+        os.remove(f'./{data["tattoo_Photo"]}') 
 
-#     await message.answer("Отправленные файлы:\n"+"\n".join(file_ids))
+    if 'more_Photo' in data:
+        os.remove(f'./{data["more_Photo"]}') 
+    if 'more_Photo2' in data:
+        os.remove(f'./{data["more_Photo2"]}') 
+    if 'more_Photo3' in data:
+        os.remove(f'./{data["more_Photo3"]}') 
+    if 'more_Photo4' in data:
+        os.remove(f'./{data["more_Photo4"]}') 
 
-# @dp.message(F.photo)
-# async def download_photo(message: types.Message, bot: Bot):
-    # await bot.download( message.photo[-1],
-    #                     destination=f"{message.photo[-1].file_id}.jpg"
-    # )
 
 # Запуск процесса поллинга новых апдейтов
 async def main():

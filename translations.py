@@ -174,7 +174,10 @@ translations = {
         "Дополнительный язык" : "Additional Language",
         "Уровень дополнительного языка" : "Proficiency in Additional Language",
         "Дата создания заявки" : "Application creation date",
-        "Есть ли еще какие-то фотографии, которые вы бы хотели добавить?":"Are there any other photos you'd like to add?"
+        "Есть ли еще какие-то фотографии, которые вы бы хотели добавить?":"Are there any other photos you'd like to add?",
+        "Какой срок вы рассматриваете для работы?" : "What time frame are you considering for employment?",
+        "Например, месяц, год или другой период?" : "Например, месяц, год или другой период?",
+        "Напишите приблизительный ответ." : "Please provide an approximate answer.",
 
    }
 }

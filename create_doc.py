@@ -166,10 +166,18 @@ def save_document(dataset, user_id):
     if 'more_Photo' in dataset:
         doc.add_picture(f'./{dataset["more_Photo"]}', height = Mm(100))
         os.remove(f'./{dataset["more_Photo"]}') 
-    for i in range(5):
-        if 'more_Photo{i}' in dataset:
-            doc.add_picture(f'./{dataset["more_Photo{i}"]}', height = Mm(100))
-            os.remove(f'./{dataset["more_Photo{i}"]}') 
+    
+    if 'more_Photo2' in dataset:
+        doc.add_picture(f'./{dataset["more_Photo2"]}', height = Mm(100))
+        os.remove(f'./{dataset["more_Photo2"]}') 
+
+    if 'more_Photo3' in dataset:
+        doc.add_picture(f'./{dataset["more_Photo3"]}', height = Mm(100))
+        os.remove(f'./{dataset["more_Photo3"]}') 
+
+    if 'more_Photo4' in dataset:
+        doc.add_picture(f'./{dataset["more_Photo4"]}', height = Mm(100))
+        os.remove(f'./{dataset["more_Photo4"]}') 
 
 
     doc.save(f'{dataset["full_name"]}_{user_id}.docx')
