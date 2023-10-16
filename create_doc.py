@@ -1,11 +1,9 @@
 from docx import Document
-from docx.shared import Pt, RGBColor, Mm, Cm
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from jpg_replace import add_float_picture
+from docx.shared import Pt, Mm
 import os
 
 def save_document(dataset, user_id):
-    doc = Document('new_resume.docx')
+    doc = Document('new_resume.doc')
     all_tables = doc.tables
     r = 0
     e = 0
@@ -113,14 +111,20 @@ def save_document(dataset, user_id):
                         cell.text = cell.text.replace(word, ' ')
 
 
+    for i, table in enumerate(all_tables):
+        for j, row in enumerate(table.rows):
+            for cell in row.cells:
+                for word in cell.text.split():
+                    if cell.text == 'profile_photo':
+                        if 'profile_photo' in word:
+                            cell.text = cell.text.replace(word, '')
+                        p = cell.paragraphs[0]
+                        run = p.add_run()
+                        run.add_picture(f'./{dataset["profile_Photo"]}', width=Mm(60))
 
     for i, table in enumerate(all_tables):
         cell = table.cell(0,0)
         for j, row in enumerate(table.rows):
-            if i == 0 and j == 1 :
-                p = cell.paragraphs[0]
-                add_float_picture(p, f'./{dataset["profile_Photo"]}', width=Mm(60))
-                # add_float_picture(p, f'./userquest.jpg', width=Mm(60))
             for cell in row.cells:
 
                 for word in cell.text.split():
@@ -180,9 +184,9 @@ def save_document(dataset, user_id):
         os.remove(f'./{dataset["more_Photo4"]}') 
 
 
-    doc.save(f'{dataset["full_name"]}_{user_id}.docx')
+    doc.save(f'{dataset["full_name"]}_{user_id}.doc')
     # doc.save('Check1.docx')
-    return(f'{dataset["full_name"]}_{user_id}.docx')
+    return(f'{dataset["full_name"]}_{user_id}.doc')
 
 
 # dataset = {'language': 'ru', 'desired_positions': 'info 1', 'full_name': 'info 2', 

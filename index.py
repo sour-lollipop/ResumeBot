@@ -1,18 +1,15 @@
 import asyncio
 import logging
 import os
-import requests
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import FSInputFile, URLInputFile, BufferedInputFile, InputFile
+from aiogram.types import URLInputFile
 from aiogram.fsm.strategy import FSMStrategy
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram import html
 from aiogram import F
-from docx import Document 
 from send_doc import send_email
 from translations import _
 from create_doc import save_document
