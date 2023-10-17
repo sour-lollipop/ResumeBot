@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import os
 
-# email = 'dossymkhanova.a@gmail.com'
+email = 'dossymkhanova.a@gmail.com'
 
 def send_email(email, subject, text, attachment_path):
     port = 465
@@ -37,6 +37,6 @@ def send_email(email, subject, text, attachment_path):
         return("Успешно отправлено!")
 
 # Specify the path to your DOCX file here
-# docx_attachment_path = './docTest.docx'
+docx_attachment_path = './info 2_1231.docx'
 
-# send_email(email, 'New resume', 'Hello, please find the resume attached.', docx_attachment_path)
+send_email(email, 'New resume', 'Hello, please find the resume attached.', docx_attachment_path)

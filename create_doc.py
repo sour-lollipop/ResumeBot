@@ -3,7 +3,7 @@ from docx.shared import Pt, Mm
 import os
 
 def save_document(dataset, user_id):
-    doc = Document('new_resume.doc')
+    doc = Document('new_resume.docx')
     all_tables = doc.tables
     r = 0
     e = 0
@@ -153,7 +153,7 @@ def save_document(dataset, user_id):
     imgP_run.font.size = Pt(14)
     imgP_run.font.name = 'Arial'
 
-    os.remove(f'./{dataset["profile_Photo"]}') 
+    # os.remove(f'./{dataset["profile_Photo"]}') 
     
     # if 'COVID_Photo' in dataset:
     #     doc.add_picture(f'./{dataset["COVID_Photo"]}', height = Mm(100))
@@ -184,32 +184,32 @@ def save_document(dataset, user_id):
         os.remove(f'./{dataset["more_Photo4"]}') 
 
 
-    doc.save(f'{dataset["full_name"]}_{user_id}.doc')
+    doc.save(f'{dataset["full_name"]}_{user_id}.docx')
     # doc.save('Check1.docx')
-    return(f'{dataset["full_name"]}_{user_id}.doc')
+    return(f'{dataset["full_name"]}_{user_id}.docx')
 
 
-# dataset = {'language': 'ru', 'desired_positions': 'info 1', 'full_name': 'info 2', 
-#            'profile_Photo': 'userquest.jpg', 
-#            'date_of_birth': 'info 3', 'place_of_birth': 'info 4', 'married': 'N', 'have_any_children': 'N', 
-#            'height': 'info 5', 'weight': 'info 6', 'city_of_residence': 'info 7', 'current_location': 'info 8', 
-#            'nationality': 'info 9', 'nationality_country': 'info 10', 'haveP_': 'N', 'covid_access': 'Yes', 
-#            'COVID_Photo_NULL': 'AgACAgIAAxkBAAIH82US2bLh34iouz1SA48yOjzH9UAWAAK-0DEbvpqYSD_7xjd8eQZRAQADAgADeQADMAQ.jpg', 
-#            'phone_Number': 'info 11', 'messenger': 'info 12', 'email': 'info 13', 'instagram': 'info 14', 
-#            'Facebook': 'info 15', 'linkedIn': 'info 16', 'vkontakte': 'info 17', 'name_cousen': 'info 18', 
-#            'phone_Number_cousen': 'info 19', 'relative_cousen': 'info 20', 'father_name': 'info 21', 
-#            'mother_name': 'info 22', 'gatar': 'no', 'UAE': 'yes', 'Bahrain': 'no', 'Oman': 'yes', 
-#            'education_stepen': 'info 23', 'university_name': 'info 24', 'special_degree': 'info 25', 
-#            'year_of_Education': 'info 26', 'postgraduate_access': 'no', 'course_access': 'yes', 
-#            'сourse_name': 'info 27', 'course_date': 'info 28', 'Course_place': 'info 29', 
-#            'doc_course_access': 'yes', 'Course_Photo_NULL': 'AgACAgIAAxkBAAIIHWUS2fWSOI0uaQPpq-iSFpW000HSAALe0DEbvpqYSAclBDun5lnAAQADAgADbQADMAQ.jpg', 
-#            'tattoo_access': 'no', 'work_exp': 'info 30', 'work_name': 'info 31', 'work_place': 'info 32', 
-#            'work_position': 'info 33', 'work_responsibilities': 'info 34', 'other_work_access': 'no', 
-#            'now_work_access': 'yes', 'now_work_exp': 'info 35', 'now_work_name': 'info 36', 'now_work_place': 'info 37',
-#              'now_work_position': 'info 38', 'now_work_responsibilities': 'info 39', 'hoste_program': 'info 40', 
-#              'finance_program': 'info 41', 'travel_program': 'info 42', 'graph_program': 'info 43', 'car_access': 'no',
-#                'russian': 'Fluent', 'english': 'Upper Intermediate', 'other_lang_access': 'Yes', 
-#                'added_language': 'info 44', 'other_lang_level': 'Fluent', 'know_about_as': 'Friends',
-#                'msg_date_test':"26 September"}
+dataset = {'language': 'ru', 'desired_positions': 'info 1', 'full_name': 'info 2', 
+           'profile_Photo': 'userquest.jpg', 
+           'date_of_birth': 'info 3', 'place_of_birth': 'info 4', 'married': 'N', 'have_any_children': 'N', 
+           'height': 'info 5', 'weight': 'info 6', 'city_of_residence': 'info 7', 'current_location': 'info 8', 
+           'nationality': 'info 9', 'nationality_country': 'info 10', 'haveP_': 'N', 'covid_access': 'Yes', 
+           'COVID_Photo_NULL': 'AgACAgIAAxkBAAIH82US2bLh34iouz1SA48yOjzH9UAWAAK-0DEbvpqYSD_7xjd8eQZRAQADAgADeQADMAQ.jpg', 
+           'phone_Number': 'info 11', 'messenger': 'info 12', 'email': 'info 13', 'instagram': 'info 14', 
+           'Facebook': 'info 15', 'linkedIn': 'info 16', 'vkontakte': 'info 17', 'name_cousen': 'info 18', 
+           'phone_Number_cousen': 'info 19', 'relative_cousen': 'info 20', 'father_name': 'info 21', 
+           'mother_name': 'info 22', 'gatar': 'no', 'UAE': 'yes', 'Bahrain': 'no', 'Oman': 'yes', 
+           'education_stepen': 'info 23', 'university_name': 'info 24', 'special_degree': 'info 25', 
+           'year_of_Education': 'info 26', 'postgraduate_access': 'no', 'course_access': 'yes', 
+           'сourse_name': 'info 27', 'course_date': 'info 28', 'Course_place': 'info 29', 
+           'doc_course_access': 'yes', 'Course_Photo_NULL': 'AgACAgIAAxkBAAIIHWUS2fWSOI0uaQPpq-iSFpW000HSAALe0DEbvpqYSAclBDun5lnAAQADAgADbQADMAQ.jpg', 
+           'tattoo_access': 'no', 'work_exp': 'info 30', 'work_name': 'info 31', 'work_place': 'info 32', 
+           'work_position': 'info 33', 'work_responsibilities': 'info 34', 'other_work_access': 'no', 
+           'now_work_access': 'yes', 'now_work_exp': 'info 35', 'now_work_name': 'info 36', 'now_work_place': 'info 37',
+             'now_work_position': 'info 38', 'now_work_responsibilities': 'info 39', 'hoste_program': 'info 40', 
+             'finance_program': 'info 41', 'travel_program': 'info 42', 'graph_program': 'info 43', 'car_access': 'no',
+               'russian': 'Fluent', 'english': 'Upper Intermediate', 'other_lang_access': 'Yes', 
+               'added_language': 'info 44', 'other_lang_level': 'Fluent', 'know_about_as': 'Friends',
+               'msg_date_test':"26 September"}
 
-# save_document(dataset, 1231)
+save_document(dataset, 1231)

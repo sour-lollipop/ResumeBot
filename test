@@ -1,11 +1,9 @@
 from docx import Document
-import os
-from jpg_replace import add_float_picture
 from docx.shared import Pt, Mm
 
 
 # Открыть документ
-doc = Document("new_resume.doc")
+doc = Document("new_resume.docx")
 all_tables = doc.tables
 # Перебрать все параграфы и заменить текст
 for i, table in enumerate(all_tables):
@@ -29,4 +27,4 @@ for i, table in enumerate(all_tables):
 
 
 # Сохранить новый документ
-doc.save("user_check.doc")
+doc.save("user_check.docx")
