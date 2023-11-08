@@ -13,7 +13,7 @@ from aiogram import F
 from send_doc import send_email
 from translations import _
 from create_doc import save_document
-
+import requests
 class Candidate_States(StatesGroup):
     Desired_positions = State()
     Full_name = State()
@@ -104,6 +104,9 @@ class Candidate_States(StatesGroup):
 logging.basicConfig(level=logging.INFO)
 # Объект бота
 TOKEN = "6681000920:AAGZKsmxgKs3nRry-Gkjgm3a64HlhjdK48U"
+# Объект testбота
+# TOKEN = "6439782775:AAGjeVKXRcGFuJih7ZkEo12xyDI-udRz2N4"
+
 bot = Bot(token=TOKEN)
 
 # Диспетчер
@@ -340,24 +343,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     covid = callback.data.split('_')[1]
     await state.update_data(covid_access = covid)
     data  = await state.get_data()
-    # if covid == 'Yes':
-    #     await callback.message.edit_text(_('Отправьте сертификат вакцинации',data['language']))
-    #     await state.set_state(Candidate_States.COVID_Photo)
-    # else:
     await callback.message.edit_text(_('Введите ваш номер мобильного телефона',data['language'])) 
     await state.set_state(Candidate_States.Phone_Number)
 
-
-# @dp.message(F.photo, Candidate_States.COVID_Photo)
-# async def save_desired_positions(message: types.Message, state: FSMContext):
-#     await bot.download(
-#         message.photo[-1],
-#         destination=f"{message.photo[-1].file_id}.jpg"
-#     )
-#     await state.update_data(COVID_Photo = f"{message.photo[-1].file_id}.jpg")
-#     data  = await state.get_data()
-#     await message.answer(_('Введите ваш номер мобильного телефона',data['language'])) 
-#     await state.set_state(Candidate_States.Phone_Number)
 
 @dp.message(Candidate_States.Phone_Number)
 async def save_desired_positions(message: types.Message, state: FSMContext):
@@ -380,26 +368,6 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     await message.answer(_('Введите ваш Instagram', data['language']))
     await state.set_state(Candidate_States.Instagram)
 
-# @dp.message(Candidate_States.Instagram)
-# async def save_desired_positions(message: types.Message, state: FSMContext):
-#     await state.update_data(instagram = message.text)
-#     data  = await state.get_data()
-#     await message.answer(_('Введите ваш Facebook', data['language']))
-#     await state.set_state(Candidate_States.Facebook)
-
-# @dp.message(Candidate_States.Facebook)
-# async def save_desired_positions(message: types.Message, state: FSMContext):
-#     await state.update_data(Facebook = message.text)
-#     data  = await state.get_data()
-#     await message.answer(_('Введите ваш LinkedIn', data['language']))
-#     await state.set_state(Candidate_States.LinkedIn)
-
-# @dp.message(Candidate_States.LinkedIn)
-# async def save_desired_positions(message: types.Message, state: FSMContext):
-#     await state.update_data(linkedIn = message.text)
-#     data  = await state.get_data()
-#     await message.answer(_('Введите ваш ВКонтакте', data['language']))
-#     await state.set_state(Candidate_States.Vkontakte)
 
 @dp.message(Candidate_States.Instagram)
 async def save_desired_positions(message: types.Message, state: FSMContext):
@@ -1281,38 +1249,18 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
                         eleventh_block + twelvth_block + third_block + fifth_block )
         await state.update_data(resume_creating_date = callback.message.date.strftime("%d %B %H:%M"))
         
-        # print('Ваши данные \n'+f'{message_data}')
-        # print('\n data_set: \n')
-        # print(data)
         await callback.message.edit_text(_('Ваши данные', data['language'])+f'\n{message_data}',reply_markup = send_kb.as_markup())
-    # else:
 
-    #     os.remove(f'./{data["profile_Photo"]}') 
-        
-    #     # if 'COVID_Photo' in data:
-    #     #     os.remove(f'./{data["COVID_Photo"]}') 
-    #     if 'Course_Photo' in data:
-    #         os.remove(f'./{data["Course_Photo"]}') 
-    #     if 'tattoo_Photo' in data:
-    #         os.remove(f'./{data["tattoo_Photo"]}') 
-
-    #     if 'more_Photo' in data:
-    #         os.remove(f'./{data["more_Photo"]}') 
-    #     if 'more_Photo2' in data:
-    #         os.remove(f'./{data["more_Photo2"]}') 
-    #     if 'more_Photo3' in data:
-    #         os.remove(f'./{data["more_Photo3"]}') 
-    #     if 'more_Photo4' in data:
-    #         os.remove(f'./{data["more_Photo4"]}') 
             
 @dp.callback_query(lambda c: c.data and c.data.startswith('Save_data'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.edit_text('Loading ...')
     data  = await state.get_data()
     msg = f'Новое резюме: {data["full_name"] }'
     msgdata = f'Новое резюме: {data["full_name"] }_{data}'
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msgdata}"
-    # print(requests.get(url).json())
+    print(requests.get(url).json())
 
     end_msg = save_document(data, callback.message.from_user.id)
     send_email('Arlen.abizh@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}')
