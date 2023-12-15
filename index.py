@@ -13,6 +13,7 @@ from aiogram import F
 from send_doc import send_email
 from translations import _
 from create_doc import save_document
+from create_doc2 import save_document2
 import requests
 class Candidate_States(StatesGroup):
     Desired_positions = State()
@@ -1263,8 +1264,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     print(requests.get(url).json())
 
     end_msg = save_document(data, callback.message.from_user.id)
-    send_email('Arlen.abizh@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}')
-    final = send_email('dossymkhanova.a@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}')
+    end_msg2 = save_document2(data, callback.message.from_user.id)
+    final = send_email('Arlen.abizh@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}',f'./{end_msg2}')
+    send_email('dossymkhanova.a@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}',f'./{end_msg2}')
     os.remove(f'./{end_msg}')
     await callback.message.edit_text(final)
 
