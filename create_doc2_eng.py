@@ -1,7 +1,7 @@
 from translate import Translator
 from docx import Document
 from docx.shared import Pt, Mm
-import os
+# import os
 
 def save_document2_eng(dataset, user_id):
     translator= Translator(from_lang="russian",to_lang="english")
@@ -29,7 +29,13 @@ def save_document2_eng(dataset, user_id):
                     # print(i,'----', j, '--' ,word)                        
                     if '_test' in word:
                         if word.split('_test')[0] in dataset and dataset[word.split('_test')[0]]!=None :
-                            cell.text = cell.text.replace(word, translator.translate(dataset[word.split('_test')[0]]))
+                            try:
+                                eng_tr = translator.translate(dataset[word.split('_test')[0]])
+                            except:
+                                eng_tr = dataset[word.split('_test')[0]]
+                            # print('ENG2:')
+                            # print(eng_tr)
+                            cell.text = cell.text.replace(word, eng_tr)
                             run = cell.paragraphs[0].runs[0]
                             font = run.font
                             font.name = 'Century Gothic'
@@ -51,7 +57,7 @@ def save_document2_eng(dataset, user_id):
     imgP_run.font.size = Pt(9)
     imgP_run.font.name = 'Century Gothic'
 
-    os.remove(f'./{dataset["profile_Photo"]}') 
+    # os.remove(f'./{dataset["profile_Photo"]}') 
     
     # if 'COVID_Photo' in dataset:
     #     doc.add_picture(f'./{dataset["COVID_Photo"]}', height = Mm(100))
@@ -59,27 +65,27 @@ def save_document2_eng(dataset, user_id):
 
     if 'Course_Photo' in dataset:
             doc.add_picture(f'./{dataset["Course_Photo"]}', height = Mm(100))
-            os.remove(f'./{dataset["Course_Photo"]}') 
+            # os.remove(f'./{dataset["Course_Photo"]}') 
 
     if 'tattoo_Photo' in dataset:
         doc.add_picture(f'./{dataset["tattoo_Photo"]}', height = Mm(100))
-        os.remove(f'./{dataset["tattoo_Photo"]}') 
+        # os.remove(f'./{dataset["tattoo_Photo"]}') 
 
     if 'more_Photo' in dataset:
         doc.add_picture(f'./{dataset["more_Photo"]}', height = Mm(100))
-        os.remove(f'./{dataset["more_Photo"]}') 
+        # os.remove(f'./{dataset["more_Photo"]}') 
     
     if 'more_Photo2' in dataset:
         doc.add_picture(f'./{dataset["more_Photo2"]}', height = Mm(100))
-        os.remove(f'./{dataset["more_Photo2"]}') 
+        # os.remove(f'./{dataset["more_Photo2"]}') 
 
     if 'more_Photo3' in dataset:
         doc.add_picture(f'./{dataset["more_Photo3"]}', height = Mm(100))
-        os.remove(f'./{dataset["more_Photo3"]}') 
+        # os.remove(f'./{dataset["more_Photo3"]}') 
 
     if 'more_Photo4' in dataset:
         doc.add_picture(f'./{dataset["more_Photo4"]}', height = Mm(100))
-        os.remove(f'./{dataset["more_Photo4"]}') 
+        # os.remove(f'./{dataset["more_Photo4"]}') 
 
 
     doc.save(f'{dataset["full_name"]}_{user_id}_2eng.docx')

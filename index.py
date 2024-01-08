@@ -1261,9 +1261,9 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     msg = f'Новое резюме: {data["full_name"] }'
     msgdata = f'Новое резюме: {data["full_name"] }_{data}'
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msgdata}"
-    print(requests.get(url).json())
+    # url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
+    # url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msgdata}"
+    # print(requests.get(url).json())
 
     end_msg = save_document(data, callback.message.from_user.id)
     end_msg2 = save_document2(data, callback.message.from_user.id)
@@ -1272,13 +1272,32 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
         end_msg2_eng = save_document2_eng(data, callback.message.from_user.id)
         final = send_email('Arlen.abizh@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}',f'./{end_msg2}',f'./{end_msg_eng}',f'./{end_msg2_eng}')
         send_email('dossymkhanova.a@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}',f'./{end_msg2}',f'./{end_msg_eng}',f'./{end_msg2_eng}')
+        os.remove(f'./{end_msg_eng}')
+        os.remove(f'./{end_msg2_eng}')
     else: 
         final = send_email('Arlen.abizh@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}',f'./{end_msg2}')
         send_email('dossymkhanova.a@gmail.com', 'New resume', f'{data["full_name"]}',f'./{end_msg}',f'./{end_msg2}')
 
-
     os.remove(f'./{end_msg}')
-    await callback.message.edit_text(final)
+    os.remove(f'./{end_msg2}')
+    
+    os.remove(f'./{data["profile_Photo"]}') 
+        
+    if 'Course_Photo' in data:
+            os.remove(f'./{data["Course_Photo"]}') 
+    if 'tattoo_Photo' in data:
+        os.remove(f'./{data["tattoo_Photo"]}') 
+
+    if 'more_Photo' in data:
+        os.remove(f'./{data["more_Photo"]}') 
+    if 'more_Photo2' in data:
+        os.remove(f'./{data["more_Photo2"]}') 
+    if 'more_Photo3' in data:
+        os.remove(f'./{data["more_Photo3"]}') 
+    if 'more_Photo4' in data:
+        os.remove(f'./{data["more_Photo4"]}') 
+
+    await callback.message.edit_text(_(final, data['language']))
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('Delete_data'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):

@@ -109,7 +109,7 @@ translations = {
         "Я согласен подписать контракт с работодателем минимум на 24 месяца" : "I agree to sign a contract with the employer for at least 24 months.",
         "Я подтверждаю, что вся информация, указанная в этом резюме, соответствует действительности." : "I confirm that all information given on this resume is true.",
         "Дата создания резюме" : "Date of creation of the resume",
-        
+        "Успешно отправлено!":"Successfully sent!",
         "ФИО" : "Your Full Name",
         "Желаемые должности" : "Desired Positions",
         "Дата рождения" : "Date of Birth",

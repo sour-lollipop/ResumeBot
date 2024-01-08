@@ -1,6 +1,6 @@
 from docx import Document
 from docx.shared import Pt, Mm
-import os
+# import os
 
 def save_document(dataset, user_id):
     doc = Document('new_resume.docx')
@@ -153,7 +153,7 @@ def save_document(dataset, user_id):
     imgP_run.font.size = Pt(14)
     imgP_run.font.name = 'Arial'
 
-    os.remove(f'./{dataset["profile_Photo"]}') 
+    # os.remove(f'./{dataset["profile_Photo"]}') 
     
     # if 'COVID_Photo' in dataset:
     #     doc.add_picture(f'./{dataset["COVID_Photo"]}', height = Mm(100))
@@ -161,27 +161,27 @@ def save_document(dataset, user_id):
 
     if 'Course_Photo' in dataset:
             doc.add_picture(f'./{dataset["Course_Photo"]}', height = Mm(100))
-            os.remove(f'./{dataset["Course_Photo"]}') 
+            # os.remove(f'./{dataset["Course_Photo"]}') 
 
     if 'tattoo_Photo' in dataset:
         doc.add_picture(f'./{dataset["tattoo_Photo"]}', height = Mm(100))
-        os.remove(f'./{dataset["tattoo_Photo"]}') 
+        # os.remove(f'./{dataset["tattoo_Photo"]}') 
 
     if 'more_Photo' in dataset:
         doc.add_picture(f'./{dataset["more_Photo"]}', height = Mm(100))
-        os.remove(f'./{dataset["more_Photo"]}') 
+        # os.remove(f'./{dataset["more_Photo"]}') 
     
     if 'more_Photo2' in dataset:
         doc.add_picture(f'./{dataset["more_Photo2"]}', height = Mm(100))
-        os.remove(f'./{dataset["more_Photo2"]}') 
+        # os.remove(f'./{dataset["more_Photo2"]}') 
 
     if 'more_Photo3' in dataset:
         doc.add_picture(f'./{dataset["more_Photo3"]}', height = Mm(100))
-        os.remove(f'./{dataset["more_Photo3"]}') 
+        # os.remove(f'./{dataset["more_Photo3"]}') 
 
     if 'more_Photo4' in dataset:
         doc.add_picture(f'./{dataset["more_Photo4"]}', height = Mm(100))
-        os.remove(f'./{dataset["more_Photo4"]}') 
+        # os.remove(f'./{dataset["more_Photo4"]}') 
 
 
     doc.save(f'{dataset["full_name"]}_{user_id}.docx')
