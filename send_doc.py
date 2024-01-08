@@ -7,7 +7,7 @@ import os
 
 email = 'dossymkhanova.a@gmail.com'
 
-def send_email(email, subject, text, attachment_path, attachment_path2 ):
+def send_email(email, subject, text, attachment_path, attachment_path2, attachment_path3 = None, attachment_path4 = None ):
     port = 465
     smtp_server = "smtp.yandex.ru"
     sender_email = "noreply.akd@yandex.ru"
@@ -37,6 +37,24 @@ def send_email(email, subject, text, attachment_path, attachment_path2 ):
             'content-disposition', 'attachment', filename=os.path.basename(attachment_path2)
         )
         msg.attach(docx_attachment2)
+
+    # Attach the first eng document
+    if attachment_path3:
+        with open(attachment_path3, 'rb') as file:
+            docx_attachment3 = MIMEApplication(file.read(), _subtype="docx")
+            docx_attachment3.add_header(
+                'content-disposition', 'attachment', filename=os.path.basename(attachment_path3)
+            )
+            msg.attach(docx_attachment3)
+            
+        # Attach the second eng document
+        with open(attachment_path4, 'rb') as file:
+            docx_attachment4 = MIMEApplication(file.read(), _subtype="docx")
+            docx_attachment4.add_header(
+                'content-disposition', 'attachment', filename=os.path.basename(attachment_path4)
+            )
+            msg.attach(docx_attachment4)
+
 
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
