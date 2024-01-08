@@ -163,29 +163,29 @@ def save_document_eng(dataset, user_id):
     #     os.remove(f'./{dataset["COVID_Photo"]}') 
 
 
-    # if 'Course_Photo' in dataset:
-    #         doc.add_picture(f'./{dataset["Course_Photo"]}', height = Mm(100))
-    #         os.remove(f'./{dataset["Course_Photo"]}') 
+    if 'Course_Photo' in dataset:
+            doc.add_picture(f'./{dataset["Course_Photo"]}', height = Mm(100))
+            os.remove(f'./{dataset["Course_Photo"]}') 
 
-    # if 'tattoo_Photo' in dataset:
-    #     doc.add_picture(f'./{dataset["tattoo_Photo"]}', height = Mm(100))
-    #     os.remove(f'./{dataset["tattoo_Photo"]}') 
+    if 'tattoo_Photo' in dataset:
+        doc.add_picture(f'./{dataset["tattoo_Photo"]}', height = Mm(100))
+        os.remove(f'./{dataset["tattoo_Photo"]}') 
 
-    # if 'more_Photo' in dataset:
-    #     doc.add_picture(f'./{dataset["more_Photo"]}', height = Mm(100))
-    #     os.remove(f'./{dataset["more_Photo"]}') 
+    if 'more_Photo' in dataset:
+        doc.add_picture(f'./{dataset["more_Photo"]}', height = Mm(100))
+        os.remove(f'./{dataset["more_Photo"]}') 
     
-    # if 'more_Photo2' in dataset:
-    #     doc.add_picture(f'./{dataset["more_Photo2"]}', height = Mm(100))
-    #     os.remove(f'./{dataset["more_Photo2"]}') 
+    if 'more_Photo2' in dataset:
+        doc.add_picture(f'./{dataset["more_Photo2"]}', height = Mm(100))
+        os.remove(f'./{dataset["more_Photo2"]}') 
 
-    # if 'more_Photo3' in dataset:
-    #     doc.add_picture(f'./{dataset["more_Photo3"]}', height = Mm(100))
-    #     os.remove(f'./{dataset["more_Photo3"]}') 
+    if 'more_Photo3' in dataset:
+        doc.add_picture(f'./{dataset["more_Photo3"]}', height = Mm(100))
+        os.remove(f'./{dataset["more_Photo3"]}') 
 
-    # if 'more_Photo4' in dataset:
-    #     doc.add_picture(f'./{dataset["more_Photo4"]}', height = Mm(100))
-    #     os.remove(f'./{dataset["more_Photo4"]}') 
+    if 'more_Photo4' in dataset:
+        doc.add_picture(f'./{dataset["more_Photo4"]}', height = Mm(100))
+        os.remove(f'./{dataset["more_Photo4"]}') 
 
 
     doc.save(f'{dataset["full_name"]}_{user_id}_eng.docx')
