@@ -1,10 +1,12 @@
-from translate import Translator
+from deep_translator import GoogleTranslator
+# from translate import Translator
 from docx import Document
 from docx.shared import Pt, Mm
 # import os
 
-def save_document2_eng(dataset, user_id):
-    translator= Translator(from_lang="russian",to_lang="english")
+def save_document2_eng(dataset, user_id):     
+    translator= GoogleTranslator(source='russian', target='english')
+
     doc = Document('sample_resume2.docx')
     all_tables = doc.tables
 

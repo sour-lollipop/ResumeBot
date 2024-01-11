@@ -1261,8 +1261,8 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     msg = f'Новое резюме: {data["full_name"] }'
     msgdata = f'Новое резюме: {data["full_name"] }_{data}'
-    # url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
-    # url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msgdata}"
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=450142398&text={msg}"
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=836047649&text={msgdata}"
     # print(requests.get(url).json())
 
     end_msg = save_document(data, callback.message.from_user.id)
