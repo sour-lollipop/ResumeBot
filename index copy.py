@@ -928,20 +928,12 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     data  = await state.get_data()
 
     added_language_KB = InlineKeyboardBuilder() 
-    # basic = types.InlineKeyboardButton(text = _('Базовый', data['language']), callback_data = 'other_lang_level_Basic')
-    # elementary = types.InlineKeyboardButton(text = _('Элементарный', data['language']), callback_data = 'other_lang_level_Elementary')
-    # lowerInt = types.InlineKeyboardButton(text = _('Ниже среднего', data['language']), callback_data = 'other_lang_level_Lower Intermediate')
-    # intermediate = types.InlineKeyboardButton(text = _('Средний', data['language']), callback_data = 'other_lang_level_Intermediate')
-    # upperInt = types.InlineKeyboardButton(text = _('Выше среднего', data['language']), callback_data = 'other_lang_level_Upper Intermediate')
-    # advanced = types.InlineKeyboardButton(text = _('Продвинутый', data['language']), callback_data = 'other_lang_level_Advanced')
-    # fluent = types.InlineKeyboardButton(text = _('Носитель', data['language']), callback_data = 'other_lang_level_Fluent')
-
-    basic = types.InlineKeyboardButton(text = 'A1', callback_data = 'other_lang_level_Basic')
-    elementary = types.InlineKeyboardButton(text = 'A2', callback_data = 'other_lang_level_Elementary')
-    lowerInt = types.InlineKeyboardButton(text = 'B1', callback_data = 'other_lang_level_Lower Intermediate')
-    intermediate = types.InlineKeyboardButton(text = 'B2', callback_data = 'other_lang_level_Intermediate')
-    upperInt = types.InlineKeyboardButton(text = 'C1', callback_data = 'other_lang_level_Upper Intermediate')
-    advanced = types.InlineKeyboardButton(text = 'C2', callback_data = 'other_lang_level_Advanced')
+    basic = types.InlineKeyboardButton(text = _('Базовый', data['language']), callback_data = 'other_lang_level_Basic')
+    elementary = types.InlineKeyboardButton(text = _('Элементарный', data['language']), callback_data = 'other_lang_level_Elementary')
+    lowerInt = types.InlineKeyboardButton(text = _('Ниже среднего', data['language']), callback_data = 'other_lang_level_Lower Intermediate')
+    intermediate = types.InlineKeyboardButton(text = _('Средний', data['language']), callback_data = 'other_lang_level_Intermediate')
+    upperInt = types.InlineKeyboardButton(text = _('Выше среднего', data['language']), callback_data = 'other_lang_level_Upper Intermediate')
+    advanced = types.InlineKeyboardButton(text = _('Продвинутый', data['language']), callback_data = 'other_lang_level_Advanced')
     fluent = types.InlineKeyboardButton(text = _('Носитель', data['language']), callback_data = 'other_lang_level_Fluent')
     added_language_KB.row(basic, elementary, lowerInt, intermediate, upperInt, advanced, fluent).adjust(3,3)
     await message.answer(_('На каком уровне вы облодаете дополнительнм языком?', data['language']),
@@ -962,26 +954,28 @@ async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.edit_text(_('Откуда вы о нас узнали?', data['language']),
                                 reply_markup = know_about_as_KB.as_markup())
 
-# @dp.callback_query(lambda c: c.data and c.data.startswith('know_about_as'))
-# async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
-#     data  = await state.get_data()
-#     await state.update_data(know_about_as = callback.data.split('_')[3])
-#     more_phote_kb = InlineKeyboardBuilder()
-#     yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'Added_More_Photo_Yes')
-#     no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Added_More_Photo_No')
-#     more_phote_kb.row(yes, no)
-#     await callback.message.edit_text(_('Есть ли еще какие-то фотографии, которые вы бы хотели добавить?', data['language']),
-#                                   reply_markup = more_phote_kb.as_markup())
-
 @dp.callback_query(lambda c: c.data and c.data.startswith('know_about_as'))
 async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(know_about_as = callback.data.split('_')[3])
-    image_from_url = URLInputFile("https://lis.4dev.kz/anon/lqO23UbNt1.jpg")
-    await callback.message.edit_text(_('Отправьте фото как показано в картине', data['language']))
-    await callback.message.answer_photo(image_from_url)
-    await state.set_state(Candidate_States.Add_Photo)
+    more_phote_kb = InlineKeyboardBuilder()
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'Added_More_Photo_Yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'Added_More_Photo_No')
+    more_phote_kb.row(yes, no)
+    await callback.message.edit_text(_('Есть ли еще какие-то фотографии, которые вы бы хотели добавить?', data['language']),
+                                  reply_markup = more_phote_kb.as_markup())
 
+@dp.callback_query(lambda c: c.data and c.data.startswith('Added_More_Photo'))
+async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    data  = await state.get_data()
+    if callback.data.split('_')[3] == 'Yes':
+        await callback.message.edit_text(_('Отправьте одно фото', data['language']))
+        await state.set_state(Candidate_States.Add_Photo)
+
+    else:
+        srok_job_msg = _('Какой срок вы рассматриваете для работы?', data['language']) + '\n' + _('Например, месяц, год или другой период?', data['language'])+ '\n' + _('Напишите приблизительный ответ.', data['language'])
+        await callback.message.edit_text(srok_job_msg)
+        await state.set_state(Candidate_States.Srok_job)
 
 @dp.message(F.photo,Candidate_States.Add_Photo)
 async def save_desired_positions(message: types.Message, state: FSMContext):
@@ -992,28 +986,26 @@ async def save_desired_positions(message: types.Message, state: FSMContext):
     data  = await state.get_data()
     await state.update_data(more_Photo = f"{message.photo[-1].file_id}.jpg")
     # print('dataset: ', data['more_Photo'])
-    image_from_url = URLInputFile("https://lis.4dev.kz/anon/6QA8cBaQbV.jpeg")
 
-    # await message.answer(_('Отправьте фото как показано в картине', data['language']))
-    await message.answer_photo(
-        image_from_url,
-        caption=_('Отправьте фото как показано в картине', data['language'])
-    )
-    # await message.answer_photo(image_from_url)
-    await state.set_state(Candidate_States.Add_Photo2)
+    more_phote_kb = InlineKeyboardBuilder()
+    yes = types.InlineKeyboardButton(text = _('Да', data['language']), callback_data = 'SecondAdded_More_Photo_Yes')
+    no = types.InlineKeyboardButton(text = _('Нет', data['language']), callback_data = 'SecondAdded_More_Photo_No')
+    more_phote_kb.row(yes, no)
+    await message.answer(_('Есть ли еще какие-то фотографии, которые вы бы хотели добавить?', data['language']),
+                                  reply_markup = more_phote_kb.as_markup())
 
 
-# @dp.callback_query(lambda c: c.data and c.data.startswith('SecondAdded_More_Photo'))
-# async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
-#     data  = await state.get_data()
-#     if callback.data.split('_')[3] == 'Yes':
-#         await callback.message.edit_text(_('Отправьте одно фото', data['language']))
-#         await state.set_state(Candidate_States.Add_Photo2)
+@dp.callback_query(lambda c: c.data and c.data.startswith('SecondAdded_More_Photo'))
+async def choose_lang(callback: types.CallbackQuery, state: FSMContext):
+    data  = await state.get_data()
+    if callback.data.split('_')[3] == 'Yes':
+        await callback.message.edit_text(_('Отправьте одно фото', data['language']))
+        await state.set_state(Candidate_States.Add_Photo2)
 
-#     else:
-#         srok_job_msg = _('Какой срок вы рассматриваете для работы?', data['language']) + '\n' + _('Например, месяц, год или другой период?', data['language'])+ '\n' + _('Напишите приблизительный ответ.', data['language'])
-#         await callback.message.edit_text(srok_job_msg)
-#         await state.set_state(Candidate_States.Srok_job)
+    else:
+        srok_job_msg = _('Какой срок вы рассматриваете для работы?', data['language']) + '\n' + _('Например, месяц, год или другой период?', data['language'])+ '\n' + _('Напишите приблизительный ответ.', data['language'])
+        await callback.message.edit_text(srok_job_msg)
+        await state.set_state(Candidate_States.Srok_job)
         
 @dp.message(F.photo,Candidate_States.Add_Photo2)
 async def save_desired_positions(message: types.Message, state: FSMContext):

@@ -178,6 +178,7 @@ translations = {
         "Какой срок вы рассматриваете для работы?" : "What time frame are you considering for employment?",
         "Например, месяц, год или другой период?" : "Например, месяц, год или другой период?",
         "Напишите приблизительный ответ." : "Please provide an approximate answer.",
+        "Отправьте фото как показано в картине":"Send photo as shown in the picture",
 
    }
 }
